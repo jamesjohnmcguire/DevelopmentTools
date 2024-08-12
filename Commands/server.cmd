@@ -5,4 +5,5 @@ SET Port=%4
 SET command="%~5"
 ECHO command is: %command%
 
-CALL plink.exe -v -ssh -t -batch %ServerUser% %Authorization% -P %Port% %command%
+@ECHO ON
+plink.exe -v -ssh -t -batch %ServerUser% %Authorization% -P %Port% %command%
