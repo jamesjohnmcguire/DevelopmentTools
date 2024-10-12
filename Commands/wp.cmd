@@ -1,2 +1,2 @@
 @ECHO OFF
-php %USERPROFILE%/Data/External/Utilities/bin/wp-cli.phar %*
+php %USERPROFILE%/Data/External/Utilities/wp-cli.phar %*
