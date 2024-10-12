@@ -105,26 +105,11 @@ CALL DatabaseCreateEx %dbname% %user% %password%
 
 :wordpress
 cd SourceCode\Web
-COPY /Y C:\Users\JamesMc\Data\Commands\wordpress.composer.json composer.json
-CALL composer install --prefer-dist
+REM Create .htaccess file
+REM Create wp-config.php file
+REM Themes ?
 
-cd wp
-REM Not needed
-REM CALL wp core download
-CALL wp core config --dbname=%dbname% --dbuser=%user% --dbpass=%password%
-CALL wp core install --url=http://%ProjectCode%.localhost/ --title=%Title% --admin_user=%user% --admin_password=%password% --admin_email=%email%
-CALL wp core update
-CALL wp theme update --all
-CALL wp plugin update --all
-CALL move /Y index.php ..
-
-REM Maybe another day, too problematic for now..
-REM CALL move /Y wp-content ..
-
-cd ..
-sed -i "s|wp-blog-header|wp\/wp-blog-header|g" index.php
-CALL wp config set WP_CONTENT_DIR "__DIR__ . '/wp-content'" --type=constant --raw
-CALL wp option update siteurl http://%ProjectCode%.localhost/wp
+REM CALL wp core config --dbname=%dbname% --dbuser=%user% --dbpass=%password%
 pause
 
 :continue
