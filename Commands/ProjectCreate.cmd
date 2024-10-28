@@ -105,14 +105,14 @@ CALL DatabaseCreateEx %dbname% %user% %password%
 :continue
 @IF "%SubType%"=="codeigniter" GOTO codeigniter
 @IF "%SubType%"=="wordpress" GOTO wordpress
-@goto database_save
+@GOTO finish
 
 :codeigniter
 cd SourceCode\Web
 echo Creating composer project
 CALL composer create-project kenjis/codeigniter-composer-installer .
 PAUSE
-@goto database_save
+@GOTO finish
 
 :wordpress
 CALL DatabaseImport %dbname% %user% %password% %USERPROFILE%\Data\Commands\wordpress-template.fast.sql
@@ -128,15 +128,12 @@ REM Create .htaccess file
 REM Create wp-config.php file
 REM Themes ?
 
-@GOTO finish
-
-:database_save
+:finish
 ECHO ON
-cd ..\Database
+CD ..\Database
 CALL mysqldump --skip-dump-date --complete-insert --extended-insert=FALSE -u %user% --password=%password% %dbname% >%dbname%.sql
 
-:finish
-cd %ProjectDirectory%
+CD %ProjectDirectory%
 COPY /Y %USERPROFILE%\Data\Commands\.gitignore .gitignore
 git init
 git add .
