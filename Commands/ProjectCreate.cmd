@@ -2,7 +2,10 @@ REM Project Types: Client, SubClient, Project
 REM Project SubTypes: Codeigniter, Development, Web, WordPress
 
 @ECHO OFF
-c:
+C:
+CD %~dp0
+SET ScriptsHome=%~dp0
+
 SET ProjectType=%1
 SET SubType=%2
 SET ProjectName=%3
@@ -118,12 +121,13 @@ PAUSE
 CALL DatabaseImport %dbname% %user% %password% %USERPROFILE%\Data\Commands\wordpress-template.fast.sql
 
 CD SourceCode
-COPY %USERPROFILE%\Data\Commands\wp-config.php Web
+COPY / Y %USERPROFILE%\Data\Commands\wp-config.php Web
 CD Web
 sed -i "s|WordPressTemplate|%dbname%|g" wp-config.php
 sed -i "s|'WordPress'|'%user%'|g" wp-config.php
 sed -i "s|SomePassword123!|%password%|g" wp-config.php
 
+COPY / Y %USERPROFILE%\Data\Commands\wp-config.php Web
 REM Create .htaccess file
 REM Create wp-config.php file
 REM Themes ?
