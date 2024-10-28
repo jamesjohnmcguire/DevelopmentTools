@@ -118,7 +118,7 @@ PAUSE
 @GOTO finish
 
 :wordpress
-CALL DatabaseImport %dbname% %user% %password% %USERPROFILE%\Data\Commands\wordpress-template.fast.sql
+CALL DatabaseImport %dbname% %user% %password% %ScriptsHome%\wordpress-template.fast.sql
 
 CD SourceCode
 COPY / Y %ScriptsHome%\wp-config.php Web
@@ -138,7 +138,7 @@ CD ..\Database
 CALL mysqldump --skip-dump-date --complete-insert --extended-insert=FALSE -u %user% --password=%password% %dbname% >%dbname%.sql
 
 CD %ProjectDirectory%
-COPY /Y %USERPROFILE%\Data\Commands\.gitignore .gitignore
+REM COPY /Y %ScriptsHome%\.gitignore .gitignore
 git init
 git add .
 git add *
