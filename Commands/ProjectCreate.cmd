@@ -96,14 +96,14 @@ CALL AppendHosts %ProjectType% %ProjectCode% %ProjectName% %SubProject%
 cd %ProjectDirectory%
 
 @IF "%SubType%"=="codeigniter" GOTO database
-@goto finish
+@GOTO finish
 
 :database
 ECHO ON
-if not exist Database\NUL md Database
+IF NOT EXIST Database\NUL MD Database
 CALL DatabaseCreateEx %dbname% %user% %password%
 
-@goto continue
+@GOTO continue
 
 :continue
 @IF "%SubType%"=="codeigniter" GOTO codeigniter
@@ -121,7 +121,7 @@ PAUSE
 CALL DatabaseImport %dbname% %user% %password% %USERPROFILE%\Data\Commands\wordpress-template.fast.sql
 
 CD SourceCode
-COPY / Y %USERPROFILE%\Data\Commands\wp-config.php Web
+COPY / Y %ScriptsHome%\wp-config.php Web
 CD Web
 sed -i "s|WordPressTemplate|%dbname%|g" wp-config.php
 sed -i "s|'WordPress'|'%user%'|g" wp-config.php
