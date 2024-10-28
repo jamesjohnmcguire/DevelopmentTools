@@ -154,6 +154,13 @@ sed -i "s|ThemeName|%ProjectName%|g" style.css
 sed -i "s|author|%author%|g" style.css
 
 CD ..\..\..\..
+MD Tests
+CD Tests
+COPY / Y %ScriptsHome%\phpunit.xml .
+COPY / Y %ScriptsHome%\PageTest.php .
+sed -i "s|Template|%ProjectName%|g" PageTest.php
+sed -i "s|author|%author%|g" PageTest.php
+sed -i "s|email|%email%|g" PageTest.php
 
 :finish
 ECHO ON
