@@ -162,6 +162,25 @@ sed -i "s|Template|%ProjectName%|g" PageTest.php
 sed -i "s|author|%author%|g" PageTest.php
 sed -i "s|email|%email%|g" PageTest.php
 
+CD ..\DevelopmentTools
+COPY / Y %ScriptsHome%\Build.cmd .
+COPY / Y %ScriptsHome%\LocalhostDatabaseCreate.cmd .
+sed -i "s|dbname|%dbname%|g" LocalhostDatabaseCreate.cmd
+sed -i "s|user|%user%|g" LocalhostDatabaseCreate.cmd
+sed -i "s|password|%password%|g" LocalhostDatabaseCreate.cmd
+
+COPY / Y %ScriptsHome%\LocalhostDatabaseDump.cmd .
+sed -i "s|dbname|%dbname%|g" LocalhostDatabaseDump.cmd
+sed -i "s|user|%user%|g" LocalhostDatabaseDump.cmd
+sed -i "s|password|%password%|g" LocalhostDatabaseDump.cmd
+
+COPY / Y %ScriptsHome%\LocalhostDatabaseUpdate.cmd .
+sed -i "s|dbname|%dbname%|g" LocalhostDatabaseUpdate.cmd
+sed -i "s|user|%user%|g" LocalhostDatabaseUpdate.cmd
+sed -i "s|password|%password%|g" LocalhostDatabaseUpdate.cmd
+
+COPY / Y %ScriptsHome%\UnitTests.cmd .
+
 :finish
 ECHO ON
 CD ..\Database
