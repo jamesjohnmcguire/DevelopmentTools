@@ -128,8 +128,9 @@ sed -i "s|'WordPress'|'%user%'|g" wp-config.php
 sed -i "s|SomePassword123!|%password%|g" wp-config.php
 
 COPY / Y %ScriptsHome%\.htaccess.wordpress .htaccess
-REM Create wp-config.php file
 REM Themes ?
+MD uploads
+MD Views
 
 :finish
 ECHO ON
