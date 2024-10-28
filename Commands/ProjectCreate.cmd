@@ -37,7 +37,9 @@ IF NOT "%1"=="" (
 	) ELSE IF "%1"=="-email" (
 		SET email=%2
 		SHIFT
-	)
+	) ELSE IF "%1"=="-author" (
+		SET author=%2
+		SHIFT
 	) ELSE IF "%1"=="-public" (
 		SET Exposure=public
 		SHIFT
