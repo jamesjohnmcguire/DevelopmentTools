@@ -13,6 +13,8 @@ SET ProjectName=%3
 SET RootUser=root
 SET RootPassword=Nvtip7UCzK1U2
 
+SET Exposure=private
+
 SHIFT & SHIFT & SHIFT
 
 :loop
@@ -34,6 +36,10 @@ IF NOT "%1"=="" (
 		SHIFT
 	) ELSE IF "%1"=="-email" (
 		SET email=%2
+		SHIFT
+	)
+	) ELSE IF "%1"=="-public" (
+		SET Exposure=public
 		SHIFT
 	)
 	SHIFT
@@ -143,3 +149,5 @@ git init
 git add .
 git add *
 git commit -m"Project %ProjectName% %ProjectType% %SubType% type project created"
+
+gh repo create %ProjectName% --description "The %ProjectName% Project." --%Exposure% --source=.
