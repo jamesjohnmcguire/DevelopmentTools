@@ -68,7 +68,6 @@ if not exist Support\Documentation\NUL md Support\Documentation
 @IF "%SubType%"=="development" GOTO development
 @IF "%SubType%"=="web" GOTO development
 @IF "%SubType%"=="wordpress" GOTO development
-@IF "%SubType%"=="wp" GOTO development
 @goto finish
 
 :development
@@ -78,20 +77,18 @@ CD SourceCode
 @IF "%SubType%"=="codeigniter" GOTO web
 @IF "%SubType%"=="web" GOTO web
 @IF "%SubType%"=="wordpress" GOTO web
-@IF "%SubType%"=="wp" GOTO web
 @goto finish
 
 :web
 if not exist Web\NUL md Web
 
-@IF "%SubType%"=="wp" GOTO database
+@IF "%SubType%"=="wordpress" GOTO database
 
 if not exist LogFiles\NUL md LogFiles
 
 CALL AppendHosts %ProjectType% %ProjectCode% %ProjectName% %SubProject%
 cd %ProjectDirectory%
 
-@IF "%SubType%"=="wordpress" GOTO database
 @IF "%SubType%"=="codeigniter" GOTO database
 @goto finish
 
@@ -100,21 +97,11 @@ ECHO ON
 if not exist Database\NUL md Database
 CALL DatabaseCreateEx %dbname% %user% %password%
 
-@IF "%SubType%"=="wordpress" GOTO wordpress
 @goto continue
-
-:wordpress
-cd SourceCode\Web
-REM Create .htaccess file
-REM Create wp-config.php file
-REM Themes ?
-
-REM CALL wp core config --dbname=%dbname% --dbuser=%user% --dbpass=%password%
-pause
 
 :continue
 @IF "%SubType%"=="codeigniter" GOTO codeigniter
-@IF "%SubType%"=="wp" GOTO wordpress-import
+@IF "%SubType%"=="wordpress" GOTO wordpress
 @goto database_save
 
 :codeigniter
@@ -124,14 +111,19 @@ CALL composer create-project kenjis/codeigniter-composer-installer .
 PAUSE
 @goto database_save
 
-:wordpress-import
+:wordpress
 CALL DatabaseImport %dbname% %user% %password% %USERPROFILE%\Data\Commands\wordpress-template.fast.sql
 
+CD SourceCode
 COPY %USERPROFILE%\Data\Commands\wp-config.php Web
 CD Web
 sed -i "s|WordPressTemplate|%dbname%|g" wp-config.php
 sed -i "s|'WordPress'|'%user%'|g" wp-config.php
 sed -i "s|SomePassword123!|%password%|g" wp-config.php
+
+REM Create .htaccess file
+REM Create wp-config.php file
+REM Themes ?
 
 @GOTO finish
 
