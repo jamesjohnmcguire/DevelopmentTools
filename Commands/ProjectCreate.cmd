@@ -142,9 +142,18 @@ sed -i "s|'WordPress'|'%user%'|g" wp-config.php
 sed -i "s|SomePassword123!|%password%|g" wp-config.php
 
 COPY / Y %ScriptsHome%\.htaccess.wordpress .htaccess
-REM Themes ?
 MD uploads
 MD Views
+
+CD themes
+MKLINK /D digitalzenworks %USERPROFILE%\Data\Clients\DigitalZenWorks\DigitalZenWorksTheme\SourceCode
+MD digitalzenworks-%ProjectName%
+CD digitalzenworks-%ProjectName%
+COPY / Y %ScriptsHome%\wordpress.style.css style.css
+sed -i "s|ThemeName|%ProjectName%|g" style.css
+sed -i "s|author|%author%|g" style.css
+
+CD ..\..\..\..
 
 :finish
 ECHO ON
