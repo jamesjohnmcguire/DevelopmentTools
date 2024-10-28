@@ -4,7 +4,7 @@ REM Project SubTypes: Codeigniter, Development, Web, WordPress
 @ECHO OFF
 C:
 CD %~dp0
-SET ScriptsHome=%~dp0
+SET ScriptsHome=%~dp0\Templates
 
 SET ProjectType=%1
 SET SubType=%2
