@@ -1,3 +1,6 @@
+REM Project Types: Client, SubClient, Project
+REM Project SubTypes: Codeigniter, Development, Web, WordPress
+
 @ECHO OFF
 c:
 SET ProjectType=%1
