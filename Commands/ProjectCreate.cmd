@@ -129,8 +129,14 @@ PAUSE
 CALL DatabaseImport %dbname% %user% %password% %ScriptsHome%\wordpress-template.fast.sql
 
 CD SourceCode
-COPY / Y %ScriptsHome%\wp-config.php Web
+COPY / Y %ScriptsHome%\wordpress.composer.json composer.json
+sed -i "s|Template|%ProjectName%|g" composer.json
+sed -i "s|template|%ProjectName%|g" composer.json
+sed -i "s|author|%author%|g" composer.json
+sed -i "s|email|%email%|g" composer.json
+
 CD Web
+COPY / Y %ScriptsHome%\wp-config.php .
 sed -i "s|WordPressTemplate|%dbname%|g" wp-config.php
 sed -i "s|'WordPress'|'%user%'|g" wp-config.php
 sed -i "s|SomePassword123!|%password%|g" wp-config.php
