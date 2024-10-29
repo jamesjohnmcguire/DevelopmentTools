@@ -2,9 +2,11 @@ REM Project Types: Client, SubClient, Project
 REM Project SubTypes: Codeigniter, Development, Web, WordPress
 
 @ECHO OFF
+
 C:
 CD %~dp0
-SET ScriptsHome=%~dp0\Templates
+CD ..\Templates
+FOR /F %%i IN ('PWD') DO SET ScriptsHome=%%i
 
 SET ProjectType=%1
 SET SubType=%2
@@ -21,6 +23,9 @@ SHIFT & SHIFT & SHIFT
 IF NOT "%1"=="" (
 	IF "%1"=="-code" (
 		SET ProjectCode=%2
+		SHIFT
+	) ELSE IF "%1"=="-client" (
+		SET ClientName=%2
 		SHIFT
 	) ELSE IF "%1"=="-subproject" (
 		SET SubProject=%2
@@ -51,72 +56,83 @@ IF NOT "%1"=="" (
 SET Title=%ProjectName%
 IF NOT [%SubProject%]==[] SET Title=%SubProject%
 
-@ECHO Creating %ProjectName% %ProjectType% %SubType% type project
+@ECHO Creating %ProjectName% %ProjectType% %SubType% type project for %ClientName%
 
-@IF "%ProjectType%"=="client" TYPE=Clients
-@IF "%ProjectType%"=="subclient" TYPE=Clients
-@IF "%ProjectType%"=="project" TYPE=Projects
+REM Project Types: Client, SubClient, Project
+IF "%ProjectType%"=="client" GOTO client
+IF "%ProjectType%"=="Client" GOTO client
+IF "%ProjectType%"=="project" GOTO project
+IF "%ProjectType%"=="Project" GOTO project
+IF "%ProjectType%"=="subclient" GOTO subclient
+IF "%ProjectType%"=="SubClient" GOTO subclient
 
-ECHO ON
-CD %USERPROFILE%\Data\%TYPE%
+:client
+GOTO end
 
-IF NOT EXIST %ProjectName%\NUL md %ProjectName%
-cd %ProjectName%
-SET ProjectDirectory=%USERPROFILE%\Data\%TYPE%\%ProjectName%
-
-IF "%ProjectType%"=="subclient" GOTO subproject
-GOTO directories
+:project
+GOTO end
 
 :subproject
 if not exist %SubProject%\NUL md %SubProject%
 cd %SubProject%
 SET ProjectDirectory=%USERPROFILE%\Data\%TYPE%\%ProjectName%\%SubProject%
+GOTO end
+
+:subclient
+IF [%ClientName%]==[] GOTO clients_error
+CD %USERPROFILE%\Data\Clients
+IF NOT EXIST %ClientName%\NUL MD %ClientName%
+CD %ClientName%
+SET ProjectDirectory=%USERPROFILE%\Data\Clients\%ProjectName%
+GOTO projects
+
+:clients_error
+ECHO ERROR: Client name not defined by -client
+GOTO end
+
+:projects
+IF NOT EXIST %ProjectName%\NUL MD %ProjectName%
+CD %ProjectName%
 
 :directories
-if not exist DevelopmentTools\NUL md DevelopmentTools
-if not exist Configuration\NUL md Configuration
-if not exist Support\NUL md Support
-if not exist Support\Documentation\NUL md Support\Documentation
-
-@IF "%SubType%"=="codeigniter" GOTO development
-@IF "%SubType%"=="development" GOTO development
-@IF "%SubType%"=="web" GOTO development
-@IF "%SubType%"=="wordpress" GOTO development
-@goto finish
+IF NOT EXIST DevelopmentTools\NUL MD DevelopmentTools
+IF NOT EXIST Configuration\NUL MD Configuration
+IF NOT EXIST Support\NUL MD Support
+IF NOT EXIST Support\Documentation\NUL MD Support\Documentation
 
 :development
-if not exist SourceCode\NUL md SourceCode
+IF NOT EXIST SourceCode\NUL MD SourceCode
 CD SourceCode
 
-@IF "%SubType%"=="codeigniter" GOTO web
-@IF "%SubType%"=="web" GOTO web
-@IF "%SubType%"=="wordpress" GOTO web
-@goto finish
+IF "%SubType%"=="codeigniter" GOTO web
+IF "%SubType%"=="web" GOTO web
+IF "%SubType%"=="wordpress" GOTO web
+IF "%SubType%"=="WordPress" GOTO web
+GOTO finish
 
 :web
-if not exist Web\NUL md Web
+IF NOT EXIST Web\NUL MD Web
 
-@IF "%SubType%"=="wordpress" GOTO database
+IF "%SubType%"=="wordpress" GOTO database
+IF "%SubType%"=="WordPress" GOTO database
 
-if not exist LogFiles\NUL md LogFiles
+IF NOT EXIST LogFiles\NUL MD LogFiles
 
 CALL AppendHosts %ProjectType% %ProjectCode% %ProjectName% %SubProject%
-cd %ProjectDirectory%
+CD %ProjectDirectory%
 
-@IF "%SubType%"=="codeigniter" GOTO database
-@GOTO finish
+IF "%SubType%"=="codeigniter" GOTO database
+GOTO finish
 
 :database
-ECHO ON
 IF NOT EXIST Database\NUL MD Database
 CALL DatabaseCreateEx %dbname% %user% %password%
 
-@GOTO continue
-
-:continue
-@IF "%SubType%"=="codeigniter" GOTO codeigniter
-@IF "%SubType%"=="wordpress" GOTO wordpress
-@GOTO finish
+@ECHO OFF
+IF "%SubType%"=="codeigniter" GOTO codeigniter
+IF "%SubType%"=="wordpress" GOTO wordpress
+IF "%SubType%"=="WordPress" GOTO wordpress
+GOTO finish
 
 :codeigniter
 cd SourceCode\Web
@@ -128,63 +144,70 @@ PAUSE
 :wordpress
 CALL DatabaseImport %dbname% %user% %password% %ScriptsHome%\wordpress-template.fast.sql
 
-CD SourceCode
-COPY / Y %ScriptsHome%\wordpress.composer.json composer.json
+SET AuthorEx=%author:"=%
+
+COPY /Y %ScriptsHome%\wordpress.composer.json composer.json
 sed -i "s|Template|%ProjectName%|g" composer.json
 sed -i "s|template|%ProjectName%|g" composer.json
-sed -i "s|author|%author%|g" composer.json
-sed -i "s|email|%email%|g" composer.json
+sed -i "s|author-name|%AuthorEx%|g" composer.json
+sed -i "s|author-email|%email%|g" composer.json
 
 CD Web
-COPY / Y %ScriptsHome%\wp-config.php .
-sed -i "s|WordPressTemplate|%dbname%|g" wp-config.php
-sed -i "s|'WordPress'|'%user%'|g" wp-config.php
-sed -i "s|SomePassword123!|%password%|g" wp-config.php
+COPY /Y %ScriptsHome%\wp-config.php .
+sed -i "s|database_name_here|%dbname%|g" wp-config.php
+sed -i "s|'username_here'|'%user%'|g" wp-config.php
+sed -i "s|password_here|%password%|g" wp-config.php
 
-COPY / Y %ScriptsHome%\.htaccess.wordpress .htaccess
-MD uploads
-MD Views
+COPY /Y %ScriptsHome%\.htaccess.wordpress .htaccess
+
+IF NOT EXIST themes\NUL MD themes
+IF NOT EXIST uploads\NUL MD uploads
+IF NOT EXIST Views\NUL MD Views
 
 CD themes
-MKLINK /D digitalzenworks %USERPROFILE%\Data\Clients\DigitalZenWorks\DigitalZenWorksTheme\SourceCode
-MD digitalzenworks-%ProjectName%
+IF NOT EXIST digitalzenworks\NUL MKLINK /D digitalzenworks %USERPROFILE%\Data\Clients\DigitalZenWorks\DigitalZenWorksTheme\SourceCode
+IF NOT EXIST digitalzenworks-%ProjectName%\NUL MD digitalzenworks-%ProjectName%
 CD digitalzenworks-%ProjectName%
-COPY / Y %ScriptsHome%\wordpress.style.css style.css
+COPY /Y %ScriptsHome%\wordpress.style.css style.css
 sed -i "s|ThemeName|%ProjectName%|g" style.css
-sed -i "s|author|%author%|g" style.css
+sed -i "s|author|%AuthorEx%|g" style.css
 
 CD ..\..\..\..
-MD Tests
-CD Tests
-COPY / Y %ScriptsHome%\phpunit.xml .
-COPY / Y %ScriptsHome%\PageTest.php .
-sed -i "s|Template|%ProjectName%|g" PageTest.php
-sed -i "s|author|%author%|g" PageTest.php
-sed -i "s|email|%email%|g" PageTest.php
 
+IF NOT EXIST Tests\NUL MD Tests
+CD Tests
+COPY /Y %ScriptsHome%\phpunit.xml .
+COPY /Y %ScriptsHome%\PageTests.php .
+sed -i "s|Template|%ProjectName%|g" PageTests.php
+sed -i "s|author|%AuthorEx%|g" PageTests.php
+sed -i "s|email|%email%|g" PageTests.php
+
+ECHO ON
 CD ..\DevelopmentTools
-COPY / Y %ScriptsHome%\Build.cmd .
-COPY / Y %ScriptsHome%\LocalhostDatabaseCreate.cmd .
+COPY /Y %ScriptsHome%\Build.cmd .
+COPY /Y %ScriptsHome%\LocalhostDatabaseCreate.cmd .
 sed -i "s|dbname|%dbname%|g" LocalhostDatabaseCreate.cmd
 sed -i "s|user|%user%|g" LocalhostDatabaseCreate.cmd
 sed -i "s|password|%password%|g" LocalhostDatabaseCreate.cmd
 
-COPY / Y %ScriptsHome%\LocalhostDatabaseDump.cmd .
+COPY /Y %ScriptsHome%\LocalhostDatabaseDump.cmd .
 sed -i "s|dbname|%dbname%|g" LocalhostDatabaseDump.cmd
 sed -i "s|user|%user%|g" LocalhostDatabaseDump.cmd
 sed -i "s|password|%password%|g" LocalhostDatabaseDump.cmd
 
-COPY / Y %ScriptsHome%\LocalhostDatabaseUpdate.cmd .
+COPY /Y %ScriptsHome%\LocalhostDatabaseUpdate.cmd .
 sed -i "s|dbname|%dbname%|g" LocalhostDatabaseUpdate.cmd
 sed -i "s|user|%user%|g" LocalhostDatabaseUpdate.cmd
 sed -i "s|password|%password%|g" LocalhostDatabaseUpdate.cmd
 
-COPY / Y %ScriptsHome%\UnitTests.cmd .
+COPY /Y %ScriptsHome%\UnitTests.cmd .
 
 :finish
-ECHO ON
-CD ..\Database
+CD ..\SourceCode\Database
 CALL mysqldump --skip-dump-date --complete-insert --extended-insert=FALSE -u %user% --password=%password% %dbname% >%dbname%.sql
+
+ECHO In finish
+PAUSE
 
 CD %ProjectDirectory%
 REM COPY /Y %ScriptsHome%\.gitignore .gitignore
@@ -194,3 +217,5 @@ git add *
 git commit -m"Project %ProjectName% %ProjectType% %SubType% type project created"
 
 gh repo create %ProjectName% --description "The %ProjectName% Project." --%Exposure% --source=.
+
+:end

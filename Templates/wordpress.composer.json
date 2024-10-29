@@ -1,12 +1,12 @@
 {
 	"description": "Template Web Site Package File",
-    "license": "proprietary",
-    "name": "template/source-code",
-    "type": "project",
+	"license": "proprietary",
+	"name": "template/source-code",
+	"type": "project",
 	"authors": [
 		{
-			"name": "author",
-			"email": "email"
+			"name": "author-name",
+			"email": "author-email"
 		}
 	],
 	"minimum-stability": "stable",
