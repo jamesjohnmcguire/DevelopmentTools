@@ -136,7 +136,7 @@ GOTO finish
 
 :codeigniter
 cd SourceCode\Web
-echo Creating composer project
+ECHO Creating composer project
 CALL composer create-project kenjis/codeigniter-composer-installer .
 PAUSE
 @GOTO finish
@@ -219,3 +219,20 @@ git commit -m"Project %ProjectName% %ProjectType% %SubType% type project created
 gh repo create %ProjectName% --description "The %ProjectName% Project." --%Exposure% --source=.
 
 :end
+
+SET author=
+SET ClientName=
+SET dbname=
+SET email=
+SET Exposure=
+SET password=
+SET ProjectCode=
+SET ProjectDirectory=
+SET ProjectName=
+SET ProjectType=
+SET RootPassword=
+SET RootUser=
+SET SubProject=
+SET SubType=
+SET Title=
+SET user=
