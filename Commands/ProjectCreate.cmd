@@ -2,6 +2,7 @@ REM Project Types: Client, SubClient, Project
 REM Project SubTypes: Codeigniter, Development, Web, WordPress
 
 @ECHO OFF
+SETLOCAL ENABLEDELAYEDEXPANSION
 
 C:
 CD %~dp0
@@ -11,6 +12,13 @@ FOR /F %%i IN ('PWD') DO SET ScriptsHome=%%i
 SET ProjectType=%1
 SET SubType=%2
 SET ProjectName=%3
+ECHO ProjectName: %ProjectName%
+
+REM Set the lower case project name
+SET Text=%3
+SET LowerCases=a b c d e f g h i j k l m n o p q r s t u v w x y z
+FOR %%Z IN (%LowerCases%) DO SET Text=!Text:%%Z=%%Z!
+SET ProjectNameLowerCase=%Text%
 
 SET RootUser=root
 SET RootPassword=Nvtip7UCzK1U2
@@ -148,7 +156,7 @@ SET AuthorEx=%author:"=%
 
 COPY /Y %ScriptsHome%\wordpress.composer.json composer.json
 sed -i "s|Template|%ProjectName%|g" composer.json
-sed -i "s|template|%ProjectName%|g" composer.json
+sed -i "s|template|%ProjectNameLowerCase%|g" composer.json
 sed -i "s|author-name|%AuthorEx%|g" composer.json
 sed -i "s|author-email|%email%|g" composer.json
 
@@ -166,11 +174,12 @@ IF NOT EXIST Views\NUL MD Views
 
 CD themes
 IF NOT EXIST digitalzenworks\NUL MKLINK /D digitalzenworks %USERPROFILE%\Data\Clients\DigitalZenWorks\DigitalZenWorksTheme\SourceCode
-IF NOT EXIST digitalzenworks-%ProjectName%\NUL MD digitalzenworks-%ProjectName%
-CD digitalzenworks-%ProjectName%
+IF NOT EXIST digitalzenworks-%ProjectNameLowerCase%\NUL MD digitalzenworks-%ProjectNameLowerCase%
+CD digitalzenworks-%ProjectNameLowerCase%
 COPY /Y %ScriptsHome%\wordpress.style.css style.css
-sed -i "s|ThemeName|%ProjectName%|g" style.css
 sed -i "s|author|%AuthorEx%|g" style.css
+sed -i "s|ThemeDomain|%ProjectNameLowerCase%|g" style.css
+sed -i "s|ThemeName|%ProjectName%|g" style.css
 
 CD ..\..\..\..
 
@@ -219,6 +228,7 @@ git commit -m"Project %ProjectName% %ProjectType% %SubType% type project created
 gh repo create %ProjectName% --description "The %ProjectName% Project." --%Exposure% --source=.
 
 :end
+ENDLOCAL
 
 SET author=
 SET ClientName=
