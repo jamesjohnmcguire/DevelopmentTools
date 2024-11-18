@@ -20,9 +20,6 @@ SET LowerCases=a b c d e f g h i j k l m n o p q r s t u v w x y z
 FOR %%Z IN (%LowerCases%) DO SET Text=!Text:%%Z=%%Z!
 SET ProjectNameLowerCase=%Text%
 
-SET RootUser=root
-SET RootPassword=Nvtip7UCzK1U2
-
 SET Exposure=private
 
 SHIFT & SHIFT & SHIFT
@@ -243,8 +240,6 @@ SET ProjectCode=
 SET ProjectDirectory=
 SET ProjectName=
 SET ProjectType=
-SET RootPassword=
-SET RootUser=
 SET SubProject=
 SET SubType=
 SET Title=
