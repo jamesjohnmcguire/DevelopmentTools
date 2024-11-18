@@ -7,7 +7,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 C:
 CD %~dp0
 CD ..\Templates
-FOR /F %%i IN ('PWD') DO SET ScriptsHome=%%i
+FOR /F %%i IN ('PWD') DO SET ScriptsTemplates=%%i
 
 SET ProjectType=%1
 SET SubType=%2
@@ -150,23 +150,23 @@ PAUSE
 @GOTO finish
 
 :wordpress
-CALL DatabaseImport %dbname% %user% %password% %ScriptsHome%\wordpress-template.fast.sql
+CALL DatabaseImport %dbname% %user% %password% %ScriptsTemplates%\wordpress-template.fast.sql
 
 SET AuthorEx=%author:"=%
 
-COPY /Y %ScriptsHome%\wordpress.composer.json composer.json
+COPY /Y %ScriptsTemplates%\wordpress.composer.json composer.json
 sed -i "s|Template|%ProjectName%|g" composer.json
 sed -i "s|template|%ProjectNameLowerCase%|g" composer.json
 sed -i "s|author-name|%AuthorEx%|g" composer.json
 sed -i "s|author-email|%email%|g" composer.json
 
 CD Web
-COPY /Y %ScriptsHome%\wp-config.php .
+COPY /Y %ScriptsTemplates%\wp-config.php .
 sed -i "s|database_name_here|%dbname%|g" wp-config.php
 sed -i "s|'username_here'|'%user%'|g" wp-config.php
 sed -i "s|password_here|%password%|g" wp-config.php
 
-COPY /Y %ScriptsHome%\.htaccess.wordpress .htaccess
+COPY /Y %ScriptsTemplates%\.htaccess.wordpress .htaccess
 
 IF NOT EXIST themes\NUL MD themes
 IF NOT EXIST uploads\NUL MD uploads
@@ -176,43 +176,43 @@ CD themes
 IF NOT EXIST digitalzenworks\NUL MKLINK /D digitalzenworks %USERPROFILE%\Data\Clients\DigitalZenWorks\DigitalZenWorksTheme\SourceCode
 IF NOT EXIST digitalzenworks-%ProjectNameLowerCase%\NUL MD digitalzenworks-%ProjectNameLowerCase%
 CD digitalzenworks-%ProjectNameLowerCase%
-COPY /Y %ScriptsHome%\wordpress.style.css style.css
+COPY /Y %ScriptsTemplates%\wordpress.style.css style.css
 sed -i "s|author|%AuthorEx%|g" style.css
 sed -i "s|ThemeDomain|%ProjectNameLowerCase%|g" style.css
 sed -i "s|ThemeName|%ProjectName%|g" style.css
 
-COPY /Y %ScriptsHome%\functions.php .
+COPY /Y %ScriptsTemplates%\functions.php .
 sed -i "s|ThemeName|%ProjectName%|g" style.css
 
 CD ..\..\..\..
 
 IF NOT EXIST Tests\NUL MD Tests
 CD Tests
-COPY /Y %ScriptsHome%\phpunit.xml .
-COPY /Y %ScriptsHome%\PageTests.php .
+COPY /Y %ScriptsTemplates%\phpunit.xml .
+COPY /Y %ScriptsTemplates%\PageTests.php .
 sed -i "s|Template|%ProjectName%|g" PageTests.php
 sed -i "s|author|%AuthorEx%|g" PageTests.php
 sed -i "s|email|%email%|g" PageTests.php
 
 ECHO ON
 CD ..\DevelopmentTools
-COPY /Y %ScriptsHome%\Build.cmd .
-COPY /Y %ScriptsHome%\LocalhostDatabaseCreate.cmd .
+COPY /Y %ScriptsTemplates%\Build.cmd .
+COPY /Y %ScriptsTemplates%\LocalhostDatabaseCreate.cmd .
 sed -i "s|dbname|%dbname%|g" LocalhostDatabaseCreate.cmd
 sed -i "s|user|%user%|g" LocalhostDatabaseCreate.cmd
 sed -i "s|password|%password%|g" LocalhostDatabaseCreate.cmd
 
-COPY /Y %ScriptsHome%\LocalhostDatabaseDump.cmd .
+COPY /Y %ScriptsTemplates%\LocalhostDatabaseDump.cmd .
 sed -i "s|dbname|%dbname%|g" LocalhostDatabaseDump.cmd
 sed -i "s|user|%user%|g" LocalhostDatabaseDump.cmd
 sed -i "s|password|%password%|g" LocalhostDatabaseDump.cmd
 
-COPY /Y %ScriptsHome%\LocalhostDatabaseUpdate.cmd .
+COPY /Y %ScriptsTemplates%\LocalhostDatabaseUpdate.cmd .
 sed -i "s|dbname|%dbname%|g" LocalhostDatabaseUpdate.cmd
 sed -i "s|user|%user%|g" LocalhostDatabaseUpdate.cmd
 sed -i "s|password|%password%|g" LocalhostDatabaseUpdate.cmd
 
-COPY /Y %ScriptsHome%\UnitTests.cmd .
+COPY /Y %ScriptsTemplates%\UnitTests.cmd .
 
 :finish
 CD ..\SourceCode\Database
@@ -222,7 +222,7 @@ ECHO In finish
 PAUSE
 
 CD %ProjectDirectory%
-REM COPY /Y %ScriptsHome%\.gitignore .gitignore
+REM COPY /Y %ScriptsTemplates%\.gitignore .gitignore
 git init
 git add .
 git add *
