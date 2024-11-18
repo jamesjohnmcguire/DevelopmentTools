@@ -181,6 +181,9 @@ sed -i "s|author|%AuthorEx%|g" style.css
 sed -i "s|ThemeDomain|%ProjectNameLowerCase%|g" style.css
 sed -i "s|ThemeName|%ProjectName%|g" style.css
 
+COPY /Y %ScriptsHome%\functions.php .
+sed -i "s|ThemeName|%ProjectName%|g" style.css
+
 CD ..\..\..\..
 
 IF NOT EXIST Tests\NUL MD Tests
