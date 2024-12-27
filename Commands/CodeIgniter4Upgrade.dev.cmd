@@ -1,16 +1,57 @@
-REM Start in the root of the project
+REM One of the Main Points for This Script, Is to Maintain History in Version Control
 
-IF %CodeIgniter4Template%=[] SET CodeIgniter4Template=%USERPROFILE%\Data\Clients\DigitalZenWorks\Libraries\PHP\CodeIgniter4AppStarter
+REM Start in the current web root of the project
 CD SourceCode\Web
+
+REM CodeIgniter4Template Is the Location of Fresh CI 4 Template Project
+IF %CodeIgniter4Template%=[] SET CodeIgniter4Template=%USERPROFILE%\Data\Clients\DigitalZenWorks\Libraries\PHP\CodeIgniter4AppStarter
 PAUSE
 
-CALL CopyRn %CodeIgniter4Template%\public public
+REM Add New Directories
+
+REM Copy New Public Files
+REM Alternative
+REM If You Have Existing Tests Files, You May Want to Manually Merge These Files
+PAUSE
+MD public
+git mv robots.txt public
+git mv favicon.ico public
+
+REM Copy New Public Files
+REM Alternative
+REM You May Want to Manually the .htaccess Merge These Files
+PAUSE
+git mv .htaccess public
+
+git mv index.php public
+COPY /Y %CodeIgniter4Template%\public\index.php public
+
+REM Copy New Tests Files
+REM Alternative
+REM If You Have Existing Tests Files, You May Want to Manually Merge These Files
+PAUSE
 CALL CopyRn %CodeIgniter4Template%\tests tests
+
+REM Copy New Vendor Files
+REM Alternative
+REM If You Have Existing Vendor Files, You May Want to Manually Merge These Files
+PAUSE
 CALL CopyRn %CodeIgniter4Template%\vendor vendor
+
 CALL CopyRn %CodeIgniter4Template%\writable writable
+
+REM Copy New .gitignore
+REM Optional
+REM You May Want to Manually Merge You Current Ignore File
+PAUSE
 
 COPY /Y %CodeIgniter4Template%\.gitignore .
 COPY /Y %CodeIgniter4Template%\builds .
+
+REM Copy New Composer Files
+REM Alternative
+REM If You Have Existing Composer Files, You May Want to Manually Merge These Files
+PAUSE
 COPY /Y %CodeIgniter4Template%\composer.* .
 COPY /Y %CodeIgniter4Template%\LICENSE .
 COPY /Y %CodeIgniter4Template%\phpunit.xml.dist .
