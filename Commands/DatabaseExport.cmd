@@ -17,7 +17,7 @@
 @GOTO end
 
 :schema
-	mysqldump --skip-dump-date -d -h localhost -u %3 --password=%4 %2 >%5.sql
+	mysqldump --default-character-set=utf8mb4 --no-data --single-transaction --skip-dump-date -h localhost -u %3 --password=%4 %2 >%5.sql
 @GOTO end
 
 :end
