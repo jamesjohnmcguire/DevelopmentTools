@@ -1,52 +1,32 @@
 @ECHO off
 
-REM Check if two arguments are provided
-IF "%~1"=="" (
-	ECHO Error: Source directory not specified.
-	ECHO Usage: MoveContents.cmd ^<source_directory^> ^<target_directory^>
-	EXIT /b 1
-)
+IF "%~1"=="" SET ErrorMessage="Source directory not specified."
+IF "%~1"=="" GOTO error
 
-IF "%~2"=="" (
-	ECHO Error: Target directory not specified.
-	ECHO Usage: MoveContents.cmd ^<source_directory^> ^<target_directory^>
-	EXIT /b 1
-)
+IF "%~2"=="" SET ErrorMessage="Target directory not specified."
+IF "%~2"=="" GOTO error
 
 SET "source=%~1"
 SET "target=%~2"
 
-IF NOT EXIST "%source%" (
-	ECHO Error: Source directory "%source%" does not exist.
-	EXIT /b 1
-)
+IF NOT EXIST "%source%" SET ErrorMessage="Source directory "%source%" does not exist."
+IF NOT EXIST "%source%" GOTO error
 
-REM Ensure target directory exists, create it if not
-IF NOT EXIST "%target%" (
-	ECHO Target directory "%target%" does not exist. Creating it...
-	MKDIR "%target%"
-	if errorlevel 1 (
-		ECHO Error: Failed to create target directory "%target%".
-		EXIT /b 1
-	)
-)
+IF NOT EXIST "%target%" ECHO Target directory "%target%" does not exist. Creating it...
+IF NOT EXIST "%target%" MD "%target%"
+IF %ERRORLEVEL% NEQ 0 SET ErrorMessage="Failed to create target directory "%target%"."
+IF %ERRORLEVEL% NEQ 0 GOTO error
 
-
-REM Check for files in the source directory
 DIR /a-d "%source%\*" >nul 2>&1
-IF errorlevel 1 (
-	ECHO No files to move in "%source%".
-) ELSE (
-	ECHO Moving files from "%source%" to "%target%"...
-	MOVE /y "%source%\*" "%target%\"
-	if errorlevel 1 (
-		ECHO Error: Failed to move files.
-	) else (
-		ECHO Files moved successfully.
-	)
-)
+IF %ERRORLEVEL% NEQ 0 ECHO No files to move in "%source%".
+IF %ERRORLEVEL% NEQ 0 GOTO sub-directories
 
-REM Move subdirectories from source to target
+ECHO Moving files from "%source%" to "%target%"...
+MOVE /y "%source%\*" "%target%\"
+IF %ERRORLEVEL% NEQ 0 ECHO Error: Failed to move files.
+IF %ERRORLEVEL% EQU 0 ECHO Files moved successfully.
+
+:sub-directories
 FOR /d %%d in ("%source%\*") DO (
 	SET "subdir_name=%%~nxd"
 	IF EXIST "%target%\%%~nxd" (
@@ -75,4 +55,11 @@ IF NOT EXIST "%source%\*" (
     ECHO Warning: Some files or directories could not be moved.
 )
 
+
 EXIT /b 0
+
+:error
+SET ErrorMessage=%ErrorMessage:"=%
+ECHO Error: %ErrorMessage%
+ECHO Usage: MoveContents.cmd ^<source_directory^> ^<target_directory^>
+EXIT /b 1
