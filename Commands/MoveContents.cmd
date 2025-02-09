@@ -8,6 +8,7 @@ IF "%~2"=="" GOTO error
 
 SET "source=%~1"
 SET "target=%~2"
+SET Recurse=%~2"
 
 IF NOT EXIST "%source%" SET ErrorMessage="Source directory "%source%" does not exist."
 IF NOT EXIST "%source%" GOTO error
@@ -19,12 +20,17 @@ IF %ERRORLEVEL% NEQ 0 GOTO error
 
 DIR /a-d "%source%\*" >nul 2>&1
 IF %ERRORLEVEL% NEQ 0 ECHO No files to move in "%source%".
-IF %ERRORLEVEL% NEQ 0 GOTO sub-directories
+IF %ERRORLEVEL% NEQ 0 GOTO recurse
 
 ECHO Moving files from "%source%" to "%target%"...
+ATTRIB -h -r -s /s /d "%source%"\*
 MOVE /y "%source%\*" "%target%\"
 IF %ERRORLEVEL% NEQ 0 ECHO Error: Failed to move files.
 IF %ERRORLEVEL% EQU 0 ECHO Files moved successfully.
+
+:recurse
+IF "%3"=="recurse" GOTO sub-directories
+GOTO finish
 
 :sub-directories
 FOR /d %%d in ("%source%\*") DO (
@@ -48,14 +54,7 @@ FOR /d %%d in ("%source%\*") DO (
 	)
 )
 
-REM Final check
-IF NOT EXIST "%source%\*" (
-    ECHO Move operation completed successfully.
-) ELSE (
-    ECHO Warning: Some files or directories could not be moved.
-)
-
-
+:finish
 EXIT /b 0
 
 :error
