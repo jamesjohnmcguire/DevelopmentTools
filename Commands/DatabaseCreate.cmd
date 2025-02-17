@@ -1,4 +1,4 @@
-@echo off
+@ECHO OFF
 REM MySqlRoot and MySqlPassword must be set as environment variables
 
 SETLOCAL
