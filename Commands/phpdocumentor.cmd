@@ -1,1 +1,1 @@
-php %USERPROFILE%\data\external\Utilities\Bin\phpDocumentor.phar %*
+php %USERPROFILE%\data\external\Utilities\phpDocumentor.phar %*

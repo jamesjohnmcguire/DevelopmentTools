@@ -1,1 +1,1 @@
-php %USERPROFILE%\data\external\Utilities\Bin\phpunit.phar %*
+php %USERPROFILE%\data\external\Utilities\phpunit.phar %*
