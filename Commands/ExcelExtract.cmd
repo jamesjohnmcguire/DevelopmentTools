@@ -14,7 +14,7 @@ MD "%ExtractDirecory%"
 :: Extract the xlsx file
 ECHO Extracting %ExcelFile% to %ExtractDirecory%...
 PAUSE
-%CompressionCommand% "%ExcelFile%" -o"%ExtractDirecory%" -y >nul
+tar -xf "%ExcelFile%" -C "%ExtractDirecory%"
 
 IF %ERRORLEVEL% neq 0 SET ErrorMessage="Failed to extract %ExcelFile%"
 IF %ERRORLEVEL% neq 0 GOTO error
