@@ -27,7 +27,7 @@ FOR /r "%TargetDirectory%" %%F in (*.jpg *.jpeg) do (
 	guetzli --quality 85 "!FILE!" "!FILE!.new"
 
 	IF EXIST "!FILE!.new" move /y "!FILE!.new" "!FILE!" >nul
-	IF NOT EXIST ECHO WARNING: Guetzli failed on !FILE!
+	IF NOT EXIST !FILE! ECHO WARNING: Guetzli failed on !FILE!
 )
 
 :success
