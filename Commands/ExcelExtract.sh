@@ -2,7 +2,7 @@
 
 # Define variables
 ExcelFile=$1
-ExtractDirecory=$ExcelFile.Contents
+ExtractDirecory=$ExcelFile.contents
 
 # Create or clear extraction directory
 if [ -d "$ExtractDirecory" ]; then
@@ -12,7 +12,8 @@ fi
 
 # Extract the xlsx file
 echo "Extracting $ExcelFile to $ExtractDirecory..."
-7z x "$ExcelFile" -o"$ExtractDirecory" -y >/dev/null
+unzip "$ExcelFile" -d "$ExtractDirecory"
+
 if [ $? -ne 0 ]; then
 	echo "Error: Failed to extract $ExcelFile"
 	exit 1
