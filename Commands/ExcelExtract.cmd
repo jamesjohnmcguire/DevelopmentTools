@@ -1,11 +1,8 @@
 @echo off
 SETLOCAL EnableDelayedExpansion
 
-:: TODO - Check for environment variable override
-SET CompressionCommand=7z x
-
 SET ExcelFile=%1
-SET ExtractDirecory=%1.Contents
+SET ExtractDirecory=%1.contents
 
 :: Create or clear extraction directory
 IF EXIST "%ExtractDirecory%" RD /s /q "%ExtractDirecory%"
@@ -13,8 +10,8 @@ MD "%ExtractDirecory%"
 
 :: Extract the xlsx file
 ECHO Extracting %ExcelFile% to %ExtractDirecory%...
-PAUSE
-tar -xf "%ExcelFile%" -C "%ExtractDirecory%"
+COPY /Y "%ExcelFile%" "%ExcelFile%".zip
+powershell -command Expand-Archive -Force -Path "%ExcelFile%.zip" -DestinationPath "%ExtractDirecory%"
 
 IF %ERRORLEVEL% neq 0 SET ErrorMessage="Failed to extract %ExcelFile%"
 IF %ERRORLEVEL% neq 0 GOTO error

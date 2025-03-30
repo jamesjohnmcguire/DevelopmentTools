@@ -2,25 +2,28 @@
 SETLOCAL EnableDelayedExpansion
 
 :: Check if directory is provided
-if "%~1"=="" SET ErrorMessage="Usage: %0 folder_name"
-if "%~1"=="" GOTO error
+IF "%~1"=="" SET ErrorMessage="Usage: %0 folder_name"
+IF "%~1"=="" GOTO error
 
-SET "contentsDir=%~1"
-SET "OutputFile=%~n1_rebuilt.xlsx"
+SET "ContentsDirectory=%~1"
+SET "OutputFile=%~n1"
 
 :: Check if directory exists
-if not exist "%contentsDir%" SET ErrorMessage="Error: Directory %contentsDir% not found"
-if not exist "%contentsDir%"  GOTO error
-
-:: Remove Existing Excel File
-
+IF NOT EXIST "%ContentsDirectory%" SET ErrorMessage="Error: Directory %ContentsDirectory% not found"
+IF NOT EXIST "%ContentsDirectory%"  GOTO error
 
 :: Rebuild the Excel file
-tar -cf %OutputFile% -C "%contentsDir%" .
-CD ..
+powershell -command Compress-Archive -Force -Path "%ContentsDirectory%\*" -DestinationPath "%OutputFile%".zip
+MOVE /Y "%OutputFile%".zip "%OutputFile%"
 
 IF %ERRORLEVEL% neq 0 SET ErrorMessage="Error during rebuilding"
 IF %ERRORLEVEL% neq 0 GOTO error
+
+IF "%~2"=="clean" GOTO clean
+GOTO success
+
+:clean
+RD /S /Q "%ContentsDirectory%"
 
 :success
 ECHO Successfully rebuilt %outputFile%
