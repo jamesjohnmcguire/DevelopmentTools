@@ -1,1 +1,1 @@
-mysql --default-character-set=utf8 --show-warnings -u %2 --password=%3 %1 <%4
+mysql --default-character-set=utf8mb4 --show-warnings -u %2 --password=%3 %1 <%4

@@ -5,19 +5,19 @@
 @GOTO end
 
 :data
-	mysqldump --skip-dump-date --no-create-info --extended-insert -h localhost -u %3 --password=%4 %2 >%5.sql
+mysqldump --default-character-set=utf8mb4 --skip-dump-date -h localhost -u %3 --password=%4 --no-create-info --extended-insert %2 >%5.sql
 @GOTO end
 
 :fast
-	mysqldump --skip-dump-date --opt -h localhost -u %3 --password=%4 %2 >%5.sql
+mysqldump --default-character-set=utf8mb4 --skip-dump-date -h localhost -u %3 --password=%4 --opt %2 >%5.sql
 @GOTO end
 
 :full
-	mysqldump --skip-dump-date --complete-insert --extended-insert=FALSE -h localhost -u %3 --password=%4 %2 >%5.sql
+mysqldump --default-character-set=utf8mb4 --skip-dump-date -h localhost -u %3 --password=%4 --complete-insert --extended-insert=FALSE %2 >%5.sql
 @GOTO end
 
 :schema
-	mysqldump --default-character-set=utf8mb4 --no-data --single-transaction --skip-dump-date -h localhost -u %3 --password=%4 %2 >%5.sql
+mysqldump --default-character-set=utf8mb4 --skip-dump-date -h localhost -u %3 --password=%4 --no-data --single-transaction %2 >%5.sql
 @GOTO end
 
 :end
