@@ -25,4 +25,6 @@ SET LocalErrorLevel=1
 ECHO ERROR: %ErrorMessage%
 
 :end
+DEL /Q "%ExcelFile%".zip
+ENDLOCAL
 EXIT /b %LocalErrorLevel%
