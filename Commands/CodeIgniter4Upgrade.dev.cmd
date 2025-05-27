@@ -3,8 +3,14 @@ REM One of the Main Points for This Script, Is to Maintain History in Version Co
 REM Start in the current web root of the project
 CD SourceCode\Web
 
-REM CodeIgniter4Template Is the Location of Fresh CI 4 Template Project
-IF %CodeIgniter4Template%=[] SET CodeIgniter4Template=%USERPROFILE%\Data\Clients\DigitalZenWorks\Libraries\PHP\CodeIgniter4AppStarter
+REM Install Template Site
+composer create-project codeigniter4/appstarter AppStarter
+CD ..\..
+REM Assuming Current Directory is Project Root
+PAUSE
+ECHO SourceCode/Web/AppStarter/vendor/ >>.gitignore
+PAUSE
+REM COMMIT? You May Want to Manually commit the AppStarter Files, at This Point
 PAUSE
 
 REM Add New Directories
@@ -24,13 +30,16 @@ PAUSE
 git mv .htaccess public
 
 git mv index.php public
-COPY /Y %CodeIgniter4Template%\public\index.php public
+REM COMMIT? You May Want to Manually commit the Moved File, at This Point
+PAUSE
+COPY /Y AppStarter\public\index.php public
 
 REM Copy New Tests Files
-REM Alternative
+CALL CopyRn AppStarter\tests tests
+REM Check For Inadvertent Copied Over Files
+
 REM If You Have Existing Tests Files, You May Want to Manually Merge These Files
 PAUSE
-CALL CopyRn %CodeIgniter4Template%\tests tests
 
 REM Copy New Vendor Files
 REM Alternative
