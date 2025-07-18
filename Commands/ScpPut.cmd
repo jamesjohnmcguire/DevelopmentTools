@@ -1,4 +1,4 @@
-@ECHO OFF
+::@ECHO OFF
 @if [%6]==[] GOTO usage
 
 SET Server=%1
