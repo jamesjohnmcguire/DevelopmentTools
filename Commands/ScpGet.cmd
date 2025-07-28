@@ -1,4 +1,4 @@
-@ECHO ON
+@ECHO OFF
 SET ServerUser=%2@%1
 SET Authentication=%3 %4
 SET Port=%5
