@@ -20,14 +20,7 @@ IF /I "%~2"=="backup" MKDIR "%TargetDirectory%\BackUps" 2>nul
 ECHO Processing JPEG files in %TargetDirectory%...
 FOR /r "%TargetDirectory%" %%F in (*.jpg *.jpeg) do (
 	SET "FILE=%%F"
-
-	IF !BackUpMode! == 1 COPY "!FILE!" "%TargetDirectory%\BackUps\" >nul
-
-	ECHO Optimizing: !FILE!
-	guetzli --quality 85 "!FILE!" "!FILE!.new"
-
-	IF EXIST "!FILE!.new" move /y "!FILE!.new" "!FILE!" >nul
-	IF NOT EXIST !FILE! ECHO WARNING: Guetzli failed on !FILE!
+	CALL ImageOptimize !FILE! %2
 )
 
 :success
