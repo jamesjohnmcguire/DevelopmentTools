@@ -8,7 +8,7 @@ SET command="%~5"
 IF NOT [%6]==[] SET Mode=agent
 
 
-ECHO command is: %command%
+ECHO command is: [96m%command%[0m
 
-@ECHO ON
-plink.exe -v -ssh -t -%Mode% %ServerUser% %Authorization% -P %Port% %command%
+:: plink.exe -v
+plink.exe -ssh -t -%Mode% %ServerUser% %Authorization% -P %Port% %command%
