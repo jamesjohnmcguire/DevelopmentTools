@@ -1,4 +1,14 @@
 @ECHO OFF
+SETLOCAL
+
+SET Verbose=false
+
+FOR %%i IN (%*) DO (
+	IF /i "%%i"=="verbose" SET Verbose=true
+)
+
+IF %Verbose%==true SET @ECHO ON
+
 SET SERVERUSER=%3@%2
 SET AUTHENTICATION=%4 %5
 SET PORT=%6
@@ -34,6 +44,10 @@ SET remotePath=%9
 SHIFT
 IF NOT [%9]==[] SET DatabaseHost=-h %~9
 
+IF %Verbose%==true GOTO information
+GOTO run
+
+:information
 ECHO ServerUser %SERVERUSER%
 ECHO Auth %AUTHENTICATION%
 ECHO MySqlOptions %MySqlOptions%
@@ -42,16 +56,9 @@ ECHO Database %Database%
 ECHO remotePath %remotePath%
 ECHO DatabaseHost %DatabaseHost%
 
+:run
 CALL server.cmd %SERVERUSER% %AUTHENTICATION% %PORT% "cd %remotePath%; mysqldump --skip-dump-date --no-tablespaces %MySqlOptions% %DatabaseHost% %MySqlCredientials% %Database% > %Database%.%Type%.sql"
 
 pscp -P %PORT% %AUTHENTICATION% %SERVERUSER%:%remotePath%/%Database%.%Type%.sql %Database%.%Type%.sql
 
-SET SERVERUSER=
-SET AUTHENTICATION=
-SET PORT=
-SET MySqlCredientials=
-SET Database=
-SET Type=
-SET MySqlOptions=
-SET remotePath=
-SET DatabaseHost=
+ENDLOCAL
