@@ -7,7 +7,6 @@ SET command="%~5"
 
 IF NOT [%6]==[] SET Mode=agent
 
-
 ECHO command is: [96m%command%[0m
 
 :: plink.exe -v
