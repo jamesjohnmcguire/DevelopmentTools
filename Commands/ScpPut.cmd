@@ -1,4 +1,5 @@
 ::@ECHO OFF
+SETLOCAL
 @if [%6]==[] GOTO usage
 
 SET Server=%1
@@ -19,3 +20,4 @@ GOTO finish
 ECHO "ERROR usage: ScpPut [server] [user] [authenication option] [authenication data] [remote path] [file(s)] <[options]>"
 
 :finish
+ENDLOCAL
