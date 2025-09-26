@@ -1,53 +1,54 @@
-@if [%5]==[] GOTO usage
+@ECHO OFF
+SETLOCAL
 
-SET server=%3
-SET user=%4
-SET file=%5
+SET command=%1
+SET remoteServer=%2
+SET remoteUser=%3
+SET remoteAuthentication=%4 %5
+SET remotePath=%6
+SET scpFile=%7
 
-if [%6]==[] SET port=22
-if not [%6]==[] SET port=%6
-if [%7]==[] SET key=
-if not [%7]==[] SET key=-i %7
+SET recurse=false
+SET verbose=false
 
-@@IF "%1"=="get" GOTO get
-@@IF "%1"=="put" GOTO put
+FOR %%i IN (%*) DO (
+	IF /i "%%i"=="recurse" SET recurse=true
+	IF /i "%%i"=="verbose" SET verbose=true
+)
 
-@GOTO end
+IF NOT [%remotePort%]==[] SET remotePort=-P 22
+IF %recurse%==true SET remoteOptions=-r
+
+IF %verbose%==true GOTO verbose
+GOTO end
+
+:verbose
+ECHO Verbose Is: ON
+ECHO Options Are: %remoteOptions%
+ECHO Port Is: %remotePort%
+ECHO Remote Server Is: %remoteServer%
+ECHO Remote User Is: %remoteUser%
+ECHO Remote Authentication Is: %remoteAuthentication%
+ECHO Remote Path Is: %remotePath%
+ECHO File Is: %scpFile%
+
+IF %command%==get GOTO get
+IF %command%==put GOTO put
 
 :get
-@IF "%2"=="conf" GOTO get_conf
-@IF "%2"=="theme" GOTO get_theme
-@GOTO end
+IF %verbose%==true ECHO Command Is: pscp %remoteAuthentication% %remotePort% %remoteOptions% %remoteUser%@%remoteServer%:%remotePath%/%scpFile% %scpFile%
 
-:get_conf
-IF [%server%]==[160.16.227.180] SET remotePath=/etc/apache2/sites-available
-
-CALL pscp -P %port% %key% %user%@%server%:%remotePath%/%file% .\%file%
-@GOTO end
-
-:get_theme
-IF [%server%]==[160.16.227.180] SET remotePath=/home/psynary/www/wp-content/themes/psynary
-
-CALL pscp -P %port% %key% %user%@%server%:%remotePath%/%file% .\%file%
-@GOTO end
+pscp %remoteAuthentication% %remotePort% %remoteOptions% %remoteUser%@%remoteServer%:%remotePath%/%scpFile% %scpFile%
+GOTO end
 
 :put
-@IF "%2"=="conf" GOTO put_conf
-@IF "%2"=="js" GOTO put_js
-@GOTO end
+IF %verbose%==true ECHO Command Is: pscp %remoteAuthentication% %remotePort% %remoteOptions% %scpFile% %remoteUser%@%remoteServer%:%remotePath%
 
-:put_conf
-IF [%server%]==[160.16.227.180] SET remotePath=/etc/apache2/sites-available
-call pscp -P %port% %key% %file% %user%@%server%:%remotePath%
-
-@GOTO end
-
-:put_js
-IF [%server%]==[160.16.227.180] SET remotePath=/home/psynary/www/wp-content/themes/psynary/js
-call pscp -P %port% %key% %file% %user%@%server%:%remotePath%
-
-@GOTO end
+pscp %remoteAuthentication% %remotePort% %remoteOptions% %scpFile% %remoteUser%@%remoteServer%:%remotePath%
+GOTO end
 
 :usage
-ECHO "ERROR usage: remote [get | put] [type] [server] [user] [file] [port] [key]"
+ECHO Usage: remote [get | put] [server] [user] [authentication type] [authentication parameter] [remote path] [file] <<recurse | verbose>>
+
 :end
+ENDLOCAL
