@@ -59,6 +59,6 @@ ECHO DatabaseHost %DatabaseHost%
 :run
 CALL server.cmd %SERVERUSER% %AUTHENTICATION% %PORT% "cd %remotePath%; mysqldump --skip-dump-date --no-tablespaces %MySqlOptions% %DatabaseHost% %MySqlCredientials% %Database% > %Database%.%Type%.sql"
 
-pscp -P %PORT% %AUTHENTICATION% %SERVERUSER%:%remotePath%/%Database%.%Type%.sql %Database%.%Type%.sql
+remote.cmd get %2 %3 %AUTHENTICATION% %remotePath% %Database%.%Type%.sql %Verbose%
 
 ENDLOCAL
