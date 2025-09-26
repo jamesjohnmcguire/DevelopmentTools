@@ -20,7 +20,7 @@ IF NOT [%remotePort%]==[] SET remotePort=-P 22
 IF %recurse%==true SET remoteOptions=-r
 
 IF %verbose%==true GOTO verbose
-GOTO end
+GOTO continue
 
 :verbose
 ECHO Verbose Is: ON
@@ -32,6 +32,7 @@ ECHO Remote Authentication Is: %remoteAuthentication%
 ECHO Remote Path Is: %remotePath%
 ECHO File Is: %scpFile%
 
+:continue
 IF %command%==get GOTO get
 IF %command%==put GOTO put
 
