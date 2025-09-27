@@ -19,6 +19,11 @@ CALL remote.cmd get %testServer% %testUser% %testAuthentication% %testRemotePath
 RD /S /Q bin
 ECHO .
 
+ECHO Getting database dump...
+CALL ServerDatabaseExport.cmd full %testServer% %testUser% %testAuthentication% %testUser% %EuroCasaDbPassword% %EuroCasaDbHost% %testUser%_main /home/%testUser% verbose
+DEL /Q %testUser%_main.full.sql
+ECHO .
+
 ECHO Putting file...
 CALL remote.cmd put %testServer% %testUser% %testAuthentication% %testRemotePath% AdbReset.cmd verbose
 ECHO .

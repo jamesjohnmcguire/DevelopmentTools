@@ -1,64 +1,60 @@
 @ECHO OFF
 SETLOCAL
 
-SET Verbose=false
-
-FOR %%i IN (%*) DO (
-	IF /i "%%i"=="verbose" SET Verbose=true
-)
-
-IF %Verbose%==true SET @ECHO ON
-
-SET SERVERUSER=%3@%2
-SET AUTHENTICATION=%4 %5
-SET PORT=%6
-SET MySqlCredientials=-u %7 --password='%8'
-SET Database=%9
-SET Type=%1
-@IF "%1"=="data" GOTO data
-@IF "%1"=="fast" GOTO fast
-@IF "%1"=="full" GOTO full
-@IF "%1"=="schema" GOTO schema
-@GOTO end
-
-:data
-	SET MySqlOptions=--no-create-info --extended-insert
-@GOTO end
-
-:fast
-	SET MySqlOptions=--opt
-@GOTO end
-
-:full
-	SET MySqlOptions=--complete-insert --extended-insert=FALSE
-@GOTO end
-
-:schema
-	SET MySqlOptions=-d
-@GOTO end
-
-:end
+SET type=%1
+SET remoteServer=%2
+SET remoteUser=%3
+SET remoteAuthentication=%4 %5
+SET databaseCredientials=-u %6 --password='%7'
+SET host=-h %8
+SET database=%9
 
 SHIFT
 SET remotePath=%9
-SHIFT
-IF NOT [%9]==[] SET DatabaseHost=-h %~9
 
-IF %Verbose%==true GOTO information
+CALL remoteBaseOptions.cmd %*
+
+IF %verbose%==true GOTO verbose
+GOTO continue
+
+:verbose
+ECHO Verbose Is: ON
+ECHO Type Is: %type%
+ECHO Remote Server Is: %remoteServer%
+ECHO Remote User Is: %remoteUser%
+ECHO Remote Authentication Is: %remoteAuthentication%
+ECHO Database Credentials Are: %databaseCredientials%
+ECHO Database Host Is: %host%
+ECHO Database Is: %database%
+ECHO Remote Path Is: %remotePath%
+
+:continue
+IF "%type%"=="data" GOTO data
+IF "%type%"=="fast" GOTO fast
+IF "%type%"=="full" GOTO full
+IF "%type%"=="schema" GOTO schema
+GOTO end
+
+:data
+SET databaseOptions=--no-create-info --extended-insert
 GOTO run
 
-:information
-ECHO ServerUser %SERVERUSER%
-ECHO Auth %AUTHENTICATION%
-ECHO MySqlOptions %MySqlOptions%
-ECHO MySqlCredientials %MySqlCredientials%
-ECHO Database %Database%
-ECHO remotePath %remotePath%
-ECHO DatabaseHost %DatabaseHost%
+:fast
+SET databaseOptions=--opt
+GOTO run
+
+:full
+SET databaseOptions=--complete-insert --extended-insert=FALSE
+GOTO run
+
+:schema
+SET databaseOptions=-d
+GOTO run
 
 :run
-CALL server.cmd %SERVERUSER% %AUTHENTICATION% %PORT% "cd %remotePath%; mysqldump --skip-dump-date --no-tablespaces %MySqlOptions% %DatabaseHost% %MySqlCredientials% %Database% > %Database%.%Type%.sql"
+SET remoteCommand="cd %remotePath%; mysqldump --skip-dump-date --no-tablespaces %databaseOptions% %host% %databaseCredientials% %database% > %database%.%type%.sql"
 
-remote.cmd get %2 %3 %AUTHENTICATION% %remotePath% %Database%.%Type%.sql %Verbose%
+CALL server.cmd %remoteUser%@%remoteServer% %remoteAuthentication% %remoteCommand%
 
+:end
 ENDLOCAL
