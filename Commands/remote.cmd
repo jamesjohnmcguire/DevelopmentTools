@@ -8,13 +8,7 @@ SET remoteAuthentication=%4 %5
 SET remotePath=%6
 SET scpFile=%7
 
-SET recurse=false
-SET verbose=false
-
-FOR %%i IN (%*) DO (
-	IF /i "%%i"=="recurse" SET recurse=true
-	IF /i "%%i"=="verbose" SET verbose=true
-)
+CALL remoteBaseOptions.cmd %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 IF NOT [%remotePort%]==[] SET remotePort=-P 22
 IF %recurse%==true SET remoteOptions=-r
