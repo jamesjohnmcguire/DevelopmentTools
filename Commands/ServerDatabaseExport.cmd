@@ -12,21 +12,15 @@ SET database=%9
 SHIFT
 SET remotePath=%9
 
-CALL remoteBaseOptions.cmd %*
-
 IF %verbose%==true GOTO verbose
 GOTO continue
 
 :verbose
 ECHO Verbose Is: ON
 ECHO Type Is: %type%
-ECHO Remote Server Is: %remoteServer%
-ECHO Remote User Is: %remoteUser%
-ECHO Remote Authentication Is: %remoteAuthentication%
 ECHO Database Credentials Are: %databaseCredientials%
 ECHO Database Host Is: %host%
 ECHO Database Is: %database%
-ECHO Remote Path Is: %remotePath%
 
 :continue
 IF "%type%"=="data" GOTO data
@@ -54,7 +48,9 @@ GOTO run
 :run
 SET remoteCommand="cd %remotePath%; mysqldump --skip-dump-date --no-tablespaces %databaseOptions% %host% %databaseCredientials% %database% > %database%.%type%.sql"
 
-CALL server.cmd %remoteUser%@%remoteServer% %remoteAuthentication% %remoteCommand%
+CALL remote.cmd command %remoteServer% %remoteUser% %remoteAuthentication% %remoteCommand% %verbose%
+
+CALL remote.cmd get %remoteServer% %remoteUser% %remoteAuthentication% %remotePath% %database%.%type%.sql
 
 :end
 ENDLOCAL
