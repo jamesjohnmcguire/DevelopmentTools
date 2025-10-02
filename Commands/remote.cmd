@@ -31,8 +31,12 @@ IF %command%==put GOTO put
 SET remoteCommand=%6
 ECHO command is: [96m%remoteCommand%[0m
 
+SET mode=batch
+::IF NOT [%9]==[] SET mode=agent
+
 :: plink.exe -v
-REM plink.exe -ssh -t -%Mode% %ServerUser% %Authorization% %remoteCommand%
+plink.exe -ssh -t -%mode% %remoteUser%@%remoteServer% %remoteAuthentication% %remoteCommand%
+
 GOTO end
 
 :get
