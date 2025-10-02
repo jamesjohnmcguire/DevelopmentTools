@@ -1,22 +1,25 @@
 @ECHO OFF
 SETLOCAL
 
-SET SERVERUSER=%2@%1
-SET AUTHENTICATION=%3 %4
-SET PORT=%5
-SET MySqlCredientials=--user=%6 --password='%7'
-SET SqlFile=%8
+SET server=%1
+SET user=%2
+SET authentication=%3 %4
+SET databaseHost=-h %5
+SET mySqlCredientials=--user=%6 --password='%7'
+SET database=%8
 SET remotePath=%9
 
 SHIFT
-IF NOT [%9]==[] SET DatabaseHost=-h %~9
+SET sqlFile=%9
 
-ECHO ServerUser %SERVERUSER%
-ECHO Auth %AUTHENTICATION%
-ECHO MySqlCredientials %MySqlCredientials%
-ECHO SqlFile %SqlFile%
-ECHO DatabaseHost %DatabaseHost%
+ECHO databaseHost %databaseHost%
+ECHO MySqlCredientials %mySqlCredientials%
+ECHO SqlFile %sqlFile%
 
-CALL server.cmd %SERVERUSER% %AUTHENTICATION% %PORT% "cd %remotePath%; mysql --default-character-set=utf8mb4 --show-warnings --verbose %DatabaseHost% %MySqlCredientials% %Database% < %SqlFile%"
+CALL remote.cmd put %server% %user% %authentication% %remotePath% %sqlFile%
+
+SET remoteCommand="cd %remotePath%; mysql --default-character-set=utf8mb4 --show-warnings --verbose %databaseHost% %databaseCredientials% %database% < %sqlFile%"
+
+CALL remote.cmd command %server% %user% %authentication% %remoteCommand% %verbose%
 
 ENDLOCAL
