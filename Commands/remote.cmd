@@ -36,8 +36,7 @@ SET mode=batch
 
 :: plink.exe -v
 plink.exe -ssh -t -%mode% %remoteUser%@%remoteServer% %remoteAuthentication% %remoteCommand%
-
-GOTO end
+EXIT /b %ERRORLEVEL%
 
 :get
 SET remotePath=%6
