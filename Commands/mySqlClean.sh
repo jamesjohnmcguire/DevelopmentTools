@@ -26,9 +26,11 @@ sed -i 's|smallint([0-9]*)|smallint|g' "$1"
 sed -i 's|tinyint([0-9]*)|tinyint|g' "$1"
 
 # Fix zero dates
-sed -i "s|datetime DEFAULT '0000-00-00 00:00:00'|datetime DEFAULT NULL|g" "$1"
-sed -i "s|NOT NULL DEFAULT '0000-00-00 00:00:00'|DEFAULT NULL|g" "$1"
-sed -i "s|'0000-00-00 00:00:00'|NULL|g" "$1"
+sed -i 's|datetime DEFAULT '0000-00-00 00:00:00'|datetime DEFAULT NULL|g' "$1"
+sed -i 's|NOT NULL DEFAULT '0000-00-00 00:00:00'|DEFAULT NULL|g' "$1"
+sed -i 's|'0000-00-00 00:00:00'|NULL|g' "$1"
+
+sed -i 's|longtext NOT NULL,|longtext NOT NULL DEFAULT (''),|g' "$1"
 
 # Fix charset from latin1 to utf8mb4
 sed -i 's|DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci|DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci|g' "$1"
