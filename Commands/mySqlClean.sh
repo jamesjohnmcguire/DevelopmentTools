@@ -20,8 +20,8 @@ sed -i '2i SET CHARACTER_SET_CLIENT = utf8mb4;' "$1"
 sed -i '3i SET CHARACTER_SET_CONNECTION = utf8mb4;' "$1"
 
 # Fix deprecated integer type specifications
-sed -i 's|bigint(20)|bigint|g' "$1"
-sed -i 's|int(11)|int|g' "$1"
+sed -i 's|bigint([0-9]*)|bigint|g' "$1"
+sed -i 's|int([0-9]*)|int|g' "$1"
 sed -i 's|smallint([0-9]*)|smallint|g' "$1"
 sed -i 's|tinyint([0-9]*)|tinyint|g' "$1"
 
