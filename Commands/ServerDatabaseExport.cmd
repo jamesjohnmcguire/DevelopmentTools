@@ -1,6 +1,8 @@
 @ECHO OFF
 SETLOCAL
 
+CALL remoteBaseOptions.cmd %*
+
 SET type=%1
 SET remoteServer=%2
 SET remoteUser=%3
