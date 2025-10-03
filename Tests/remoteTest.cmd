@@ -27,12 +27,23 @@ CALL ServerDatabaseExport.cmd full %testServer% %testUser% %testAuthentication% 
 DEL /Q %testUser%_main.full.sql
 ECHO .
 
+:put-file
 ECHO Putting file...
 CALL remote.cmd put %testServer% %testUser% %testAuthentication% %testRemotePath% test.sql verbose
 ECHO .
 
+:put-directory
 ECHO Putting directory...
 CALL remote.cmd put %testServer% %testUser% %testAuthentication% %testRemotePath% TestData verbose recurse
+ECHO .
+
+:mysql-clean
+ECHO Testing MySql Clean Up...
+CD TestData
+COPY /Y mysql-old-original.sql mysql-old-test.sql
+CALL mySqlClean.cmd mysql-old-test.sql
+DEL /Q mysql-old-test.sql
+CD ..
 ECHO .
 
 :end
