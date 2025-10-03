@@ -5,7 +5,7 @@ SET server=%1
 SET user=%2
 SET authentication=%3 %4
 SET databaseHost=-h %5
-SET mySqlCredientials=--user=%6 --password='%7'
+SET databaseCredientials=--user=%6 --password='%7'
 SET database=%8
 SET remotePath=%9
 
