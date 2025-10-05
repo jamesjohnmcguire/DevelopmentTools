@@ -1,0 +1,7 @@
+Images
+	Alternate
+		cjpeg -quality 85 -outfile "!FILE!.new" "!FILE!"
+Videos
+	ffmpeg -i ShibuyaCrossing.MOV -vcodec libx264 -crf 28 -preset fast -b:v 1M -acodec aac -b:a 96k -movflags +faststart output.mp4
+Find
+	findstr /s /i gcloud *.* 2>nul

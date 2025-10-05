@@ -1,0 +1,6 @@
+Testing.cmd	Work through issues with escaping quotes
+Set Consistent Capitalization on Script Names
+Test Explicitly Setting Port
+Resolve other server / remote command scripts
+Review security changes
+Add error code checking
