@@ -5,19 +5,19 @@
 @GOTO end
 
 :data
-mysqldump --default-character-set=utf8mb4 --skip-dump-date -h localhost -u %3 --password=%4 --no-create-info --extended-insert %2 >%5.sql
+mysqldump --default-character-set=utf8mb4 --no-tablespaces --single-transaction --skip-dump-date -h localhost -u %3 --password=%4 --no-create-info --extended-insert %2 >%5.sql
 @GOTO end
 
 :fast
-mysqldump --default-character-set=utf8mb4 --skip-dump-date -h localhost -u %3 --password=%4 --opt %2 >%5.sql
+mysqldump --default-character-set=utf8mb4 --no-tablespaces --single-transaction --skip-comments --skip-comments --skip-dump-date -h localhost -u %3 --password=%4 --opt %2 >%5.sql
 @GOTO end
 
 :full
-mysqldump --default-character-set=utf8mb4 --skip-dump-date -h localhost -u %3 --password=%4 --complete-insert --extended-insert=FALSE %2 >%5.sql
-@GOTO end
+mysqldump --default-character-set=utf8mb4 --no-tablespaces --single-transaction --skip-dump-date -h localhost -u %3 --password=%4 --complete-insert --extended-insert=FALSE %2 >%5.sql
+@GOTO endssss
 
 :schema
-mysqldump --default-character-set=utf8mb4 --skip-dump-date -h localhost -u %3 --password=%4 --no-data --single-transaction %2 >%5.sql
+mysqldump --default-character-set=utf8mb4 --no-tablespaces --single-transaction --skip-dump-date -h localhost -u %3 --password=%4 --no-data %2 >%5.sql
 @GOTO end
 
 :end

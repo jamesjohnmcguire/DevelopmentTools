@@ -48,7 +48,7 @@ SET databaseOptions=-d
 GOTO run
 
 :run
-SET remoteCommand="cd %remotePath%; mysqldump --skip-dump-date --no-tablespaces %databaseOptions% %host% %databaseCredientials% %database% > %database%.%type%.sql"
+SET remoteCommand="cd %remotePath%; mysqldump --default-character-set=utf8mb4 --no-tablespaces --single-transaction --skip-dump-date %databaseOptions% %host% %databaseCredientials% %database% > %database%.%type%.sql"
 
 CALL remote.cmd command %remoteServer% %remoteUser% %remoteAuthentication% %remoteCommand% %verbose%
 
