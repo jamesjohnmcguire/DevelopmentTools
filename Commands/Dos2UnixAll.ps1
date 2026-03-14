@@ -1,8 +1,10 @@
-param (
-    [string]$Root = "."
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $false, Position = 0, ValueFromRemainingArguments = $true)]
+    [string[]]$Path = @(".")
 )
 
-$Extensions = @(".cs", ".csproj")
+$filesToProcess = [System.Collections.Generic.List[IO.FileInfo]]::new()
 
 Get-ChildItem -Path $Root -Recurse -File |
 	Where-Object { $Extensions -contains $_.Extension } |
