@@ -1,4 +1,4 @@
-@echo off
+@ECHO OFF
 SETLOCAL EnableDelayedExpansion
 
 SET ExcelFile=%1
