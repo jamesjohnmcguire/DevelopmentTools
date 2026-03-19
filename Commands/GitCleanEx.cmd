@@ -1,6 +1,8 @@
 @ECHO OFF
+SETLOCAL
 
-git submodule foreach "git clean -dffx" %1
+git clean -dffx %1
+
 git submodule foreach --recursive "git clean -dffx %1"
 
 ENDLOCAL
