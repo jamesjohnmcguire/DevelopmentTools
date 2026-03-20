@@ -13,3 +13,4 @@ Get-ChildItem -Path $Root -Recurse -File |
 		Write-Host "LF fixed: $($_.FullName)"
 	}
 
+Write-Host "Dos2Unix All Complete"
