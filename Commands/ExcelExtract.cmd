@@ -11,7 +11,7 @@ MD "%ExtractDirecory%"
 :: Extract the xlsx file
 IF "%2"=="verbose" ECHO Extracting %ExcelFile% to %ExtractDirecory%...
 COPY /Y "%ExcelFile%" "%ExcelFile%".zip >NUL
-powershell -command Expand-Archive -Force -Path "%ExcelFile%.zip" -DestinationPath "%ExtractDirecory%"
+pwsh -command Expand-Archive -Force -Path "%ExcelFile%.zip" -DestinationPath "%ExtractDirecory%"
 
 IF %ERRORLEVEL% neq 0 SET ErrorMessage="Failed to extract %ExcelFile%"
 IF %ERRORLEVEL% neq 0 GOTO error
