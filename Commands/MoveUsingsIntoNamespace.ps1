@@ -9,20 +9,18 @@ Get-ChildItem -Path $Root -Recurse -File -Filter *.cs |
         $_.FullName -notmatch '\\obj\\'
     } |
     ForEach-Object {
-
     $path = $_.FullName
     $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8
     $text = $text -replace "`r`n", "`n"
-
+    # Strip any trailing newlines — we'll add exactly one at the end
+    $text = $text.TrimEnd("`n")
     $lines = $text -split "`n"
-
     $i = 0
     $count = $lines.Count
 
     # 1. Skip header: blank lines and any // or /* */ comment lines
     while ($i -lt $count) {
         $line = $lines[$i]
-
         if ($line -match '^\s*$' -or
             $line -match '^\s*//' -or
             $line -match '^\s*/\*' -or
@@ -32,22 +30,20 @@ Get-ChildItem -Path $Root -Recurse -File -Filter *.cs |
             $i++
             continue
         }
-
         break
     }
 
     # 2. Collect top-level using statements
     $usingStart = $i
     $usings = @()
-
     while ($i -lt $count -and $lines[$i] -match '^\s*using\s+[^\s;].*;\s*$') {
         $usings += $lines[$i]
         $i++
     }
-
     if ($usings.Count -eq 0) {
         return
     }
+    $usingEnd = $i - 1
 
     # Allow blank lines after usings
     while ($i -lt $count -and $lines[$i] -match '^\s*$') {
@@ -56,64 +52,60 @@ Get-ChildItem -Path $Root -Recurse -File -Filter *.cs |
 
     # 3. Expect namespace line
     if ($i -ge $count -or $lines[$i] -notmatch '^\s*namespace\s+[^;]+;\s*$|^\s*namespace\s+[^{\s]+') {
-        # Not a standard namespace layout — skip
         return
     }
-
     $namespaceLineIndex = $i
 
-    # File-scoped namespace
+    # Build header (everything before the using statements)
+    $header = if ($usingStart -gt 0) { $lines[0..($usingStart - 1)] } else { @() }
+
+    # File-scoped namespace: 'namespace Foo.Bar;'
     if ($lines[$i] -match '^\s*namespace\s+[^;]+;\s*$') {
-
-        # Insert usings after this line
-        $insertIndex = $i + 1
-
-        # Remove original usings
         $newLines = @()
-        $newLines += $lines[0..($usingStart - 1)]
-        $newLines += $lines[$i..($i)]
-		$newLines += ""
+        $newLines += $header
+        $newLines += $lines[$namespaceLineIndex]
+        $newLines += ""
         $newLines += $usings
-        $newLines += $lines[($i + 1)..($count - 1)]
-
+        # Rest of file after the namespace line, skipping any leading blank line
+        $restStart = $namespaceLineIndex + 1
+        while ($restStart -lt $count -and $lines[$restStart] -match '^\s*$') {
+            $restStart++
+        }
+        if ($restStart -lt $count) {
+            $newLines += ""
+            $newLines += $lines[$restStart..($count - 1)]
+        }
     }
     else {
-        # Block namespace (Allman style)
-
-        # Find the opening brace line
+        # Block namespace (Allman style) — find opening brace
         $j = $i + 1
         while ($j -lt $count -and $lines[$j] -match '^\s*$') {
             $j++
         }
-
         if ($j -ge $count -or $lines[$j] -notmatch '^\s*\{\s*$') {
-            # No brace found — skip
             return
         }
-
-        # Determine indentation (tabs preserved)
         $braceLine = $lines[$j]
         $indent = ($braceLine -replace '^(\s*).*$','$1') + "`t"
-
         $indentedUsings = $usings | ForEach-Object { $indent + ($_ -replace '^\s*','') }
-
-        # Build new file
         $newLines = @()
-        $newLines += $lines[0..($usingStart - 1)]          # header
-        $newLines += $lines[$namespaceLineIndex..$j]      # namespace + {
-        $newLines += $indentedUsings                       # moved usings
-		$newLines += ""
-        $newLines += $lines[($j + 1)..($count - 1)]       # rest of file
+        $newLines += $header
+        $newLines += $lines[$namespaceLineIndex..$j]
+        $newLines += $indentedUsings
+        $newLines += ""
+        $newLines += $lines[($j + 1)..($count - 1)]
     }
 
-    $newText = ($newLines -join "`n")
+    # Join and add exactly one trailing newline
+    $newText = ($newLines -join "`n") + "`n"
 
-    if ($newText -ne $text) {
+    if ($newText -ne ($text + "`n")) {
         if ($WhatIf) {
             Write-Host "Would update: $path"
         }
         else {
-            Set-Content -LiteralPath $path -Value $newText -Encoding UTF8
+            $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+            [IO.File]::WriteAllText($path, $newText, $utf8NoBom)
             Write-Host "Updated: $path"
         }
     }
