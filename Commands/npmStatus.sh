@@ -7,7 +7,7 @@ npm install
 
 echo
 echo -e "\e[36mOutdated:\e[0m"
-npm outdated --depth=0
+npm outdated --depth=0 || true
 
 echo
 echo -e "\e[36mSecurity audit (high level):\e[0m"
