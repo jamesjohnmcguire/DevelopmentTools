@@ -18,3 +18,5 @@ IF %errorlevel% EQU 1 (
 
 @ECHO OFF
 DEL db_check_result.txt
+
+ENDLOCAL
