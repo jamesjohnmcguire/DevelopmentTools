@@ -6,7 +6,7 @@
 # =============================================================================
 # Run each block independently or comment out sections you don't need.
 # Requires: .NET 6+ SDK (dotnet format is built-in)
-# Optional: StyleCop.Analyzers NuGet package for SA* rules
+# Requires: StyleCop.Analyzers NuGet package for SA* rules
 #
 # Usage: ./dotnet-format-autofixable.sh [path/to/solution.sln]
 # =============================================================================
@@ -22,9 +22,7 @@ run()
 	echo
 }
 
-
 TARGET="${1:-.}"  # Default to current directory if no arg supplied
-
 
 echo ""
 echo "============================================================================="
@@ -96,7 +94,7 @@ run "IDE0001" "Simplify type name (e.g. System.IO.FileInfo → FileInfo)"
 run "IDE0002" "Simplify member access (e.g. remove redundant qualifiers)"
 run "IDE0004" "Remove unnecessary cast"
 
-# Doesn't Handle Interops very well
+# IDE0005 Doesn't Handle Interops very well
 # run "IDE0005" "Remove unnecessary using / Imports directives"
 # run "IDE0035" "Remove unreachable code"
 run "IDE0051" "Remove unused private members (fields, methods, etc.)"
@@ -243,26 +241,23 @@ run "SA1026" "Code must not contain space after new keyword in implicit allocati
 run "SA1027" "Use tabs correctly"
 run "SA1028" "Code should not contain trailing whitespace"
 
-# --- Readability Rules (SA1100–SA1150) ---
+# --- Readability Rules (SA1100-SA1150) ---
 run "SA1100" "Do not prefix calls with base unless local implementation exists"
 run "SA1101" "Prefix local calls with this"
 run "SA1106" "Code must not contain empty statements"
 run "SA1107" "Code must not contain multiple statements on one line"
-run "SA1108" "Block statements must not contain embedded comments"
 run "SA1110" "Opening parenthesis must be on declaration line"
 run "SA1111" "Closing parenthesis must be on line of last parameter"
 run "SA1112" "Closing parenthesis must be on line of opening parenthesis"
 run "SA1113" "Comma must be on same line as previous parameter"
-run "SA1114" "Parameter list must follow declaration"
 run "SA1116" "Split parameters must start on line after declaration"
-run "SA1117" "Parameters must be on same line or separate lines"
 run "SA1119" "Statement must not use unnecessary parenthesis"
 run "SA1120" "Comments must contain text"
-run "SA1121" "Use built-in type alias (String → string, Int32 → int)"
+run "SA1121" "Use built-in type alias (String -> string, Int32 -> int)"
 run "SA1122" "Use string.Empty for empty strings"
 run "SA1123" "Do not place regions within elements"
 run "SA1124" "Do not use regions"
-run "SA1125" "Use shorthand for nullable types (Nullable<T> → T?)"
+run "SA1125" "Use shorthand for nullable types (Nullable<T> -> T?)"
 run "SA1127" "Generic type constraints must be on their own line"
 run "SA1128" "Put constructor initializers on their own line"
 run "SA1129" "Do not use default value-type constructor"
@@ -276,14 +271,9 @@ run "SA1136" "Enum values must be on separate lines"
 run "SA1137" "Elements must have same indentation"
 run "SA1139" "Use literal suffix notation instead of casting"
 
-# --- Ordering Rules (SA1200–SA1216) ---
+# --- Ordering Rules (SA1200-SA1217) ---
 run "SA1200" "Using directives must be placed correctly"
-run "SA1201" "Elements must appear in correct order"
-run "SA1202" "Elements must be ordered by access"
-run "SA1203" "Constants must appear before fields"
-run "SA1204" "Static elements must appear before instance elements"
 run "SA1205" "Partial elements must declare access"
-run "SA1206" "Declaration keywords must follow order"
 run "SA1207" "Protected must come before internal"
 run "SA1208" "System using directives must be placed before other using directives"
 run "SA1209" "Using alias directives must be placed after other using directives"
@@ -291,17 +281,15 @@ run "SA1210" "Using directives must be ordered alphabetically by namespace"
 run "SA1211" "Using alias directives must be ordered alphabetically"
 run "SA1212" "Property accessors must follow order"
 run "SA1213" "Event accessors must follow order"
-run "SA1214" "Readonly fields must appear before non-readonly fields"
 run "SA1216" "Using static directives must be placed at correct location"
 run "SA1217" "Using static directives must be ordered alphabetically"
 
-# --- Naming Rules (SA1300–SA1316) ---
+# --- Naming Rules (SA1300-SA1316) ---
 run "SA1300" "Element must begin with upper-case letter"
 run "SA1301" "Element must begin with lower-case letter"
 run "SA1302" "Interface names must begin with I"
 run "SA1303" "Const field names must begin with upper-case letter"
 run "SA1304" "Non-private readonly fields must begin with upper-case letter"
-run "SA1305" "Field names must not use Hungarian notation"
 run "SA1306" "Field names must begin with lower-case letter"
 run "SA1307" "Accessible fields must begin with upper-case letter"
 run "SA1308" "Variable names must not be prefixed"
@@ -313,23 +301,17 @@ run "SA1313" "Parameter names must begin with lower-case letter"
 run "SA1314" "Type parameter names must begin with T"
 run "SA1316" "Tuple element names must use correct casing"
 
-# --- Maintainability Rules (SA1400–SA1414) ---
+# --- Maintainability Rules (SA1400-SA1413) ---
 run "SA1400" "Access modifier must be declared"
-run "SA1401" "Fields must be private"
 run "SA1402" "File may only contain a single type"
-run "SA1403" "File may only contain a single namespace"
-run "SA1404" "Code analysis suppression must have justification"
-run "SA1405" "Debug.Assert must provide message text"
-run "SA1406" "Debug.Fail must provide message text"
 run "SA1407" "Arithmetic expressions must declare precedence"
 run "SA1408" "Conditional expressions must declare precedence"
 run "SA1410" "Remove delegate parenthesis when possible"
 run "SA1411" "Attribute constructor must not use unnecessary parenthesis"
 run "SA1412" "Store files as UTF-8 with byte order mark"
 run "SA1413" "Use trailing comma in multi-line initializers"
-run "SA1414" "Tuple types in signatures must have element names"
 
-# --- Layout Rules (SA1500–SA1516) ---
+# --- Layout Rules (SA1500-SA1520) ---
 run "SA1500" "Braces for multi-line statements must not share line"
 run "SA1501" "Statement must not be on single line"
 run "SA1502" "Element must not be on single line"
@@ -352,9 +334,7 @@ run "SA1518" "Use line endings correctly at end of file"
 run "SA1519" "Braces must not be omitted from multi-line child statement"
 run "SA1520" "Use braces consistently"
 
-run "SA1626" "Do not use documentation style slashes"
-run "SA1629" "Ensure All Documentation ends with a period"
-run "SA1633" "File Must Have Header"
+run "SA1626" "Single-line comments must not use documentation-style slashes"
 run "SA1638" "Each Attribute Should Be on It's Own Line"
 
 echo ""
