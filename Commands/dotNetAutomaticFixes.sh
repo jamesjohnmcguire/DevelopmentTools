@@ -8,21 +8,70 @@
 # Requires: .NET 6+ SDK (dotnet format is built-in)
 # Requires: StyleCop.Analyzers NuGet package for SA* rules
 #
-# Usage: ./dotnet-format-autofixable.sh [path/to/solution.sln]
+# Usage: ./dotNetAutomaticFixes.sh [path/to/solution.sln] [--reset]
+#
+#   path/to/solution.sln   Optional. Defaults to "." (current directory).
+#   --reset                Clear saved progress and start from rule #1,
+#                          without the interactive resume prompt.
+#
+# RESUME SUPPORT
+# ------------------------------------------------------------------
+# Progress is written to a small text file (one completed diagnostic ID
+# per line) next to your target: <target>/.dotnet-format-progress
+#
+# Ctrl-C at any point is safe. Come back later and re-run this script from
+# the same directory. It skips everything already marked done, and picks up on
+# the next not run rule automatically.
 # =============================================================================
+
+is_done()
+{
+	[[ -f "$progressFile" ]] && grep -qxF "$1" "$progressFile"
+}
 
 run()
 {
 	local id="$1"
 	local desc="$2"
+
+	if is_done "$id"; then
+		return
+	fi
+
 	echo ""
 	echo "[$id] $desc"
-	dotnet format "$TARGET" --diagnostics "$id" --verbosity detailed
+
+	dotnet format "$location" --diagnostics "$id" --verbosity detailed | grep -v "is using configuration from"
+
+	echo "$id" >> "$progressFile"
+
+	echo "[$id] $desc Completed"
 	read -r -p "  >> Press any key to continue..." -n 1
-	echo
 }
 
-TARGET="${1:-.}"  # Default to current directory if no arg supplied
+location=.
+reset=false
+
+if [ $# -gt 0 ]; then
+	if [ "$1" != "--reset" ]; then
+		location="$1"
+	elif [ "$1" == "--reset" ]; then
+		reset=true
+	fi
+
+	if [ $# -gt 1 ]; then
+		echo "arg2 $2"
+		if [ "$2" == "--reset" ]; then
+			reset=true
+		fi
+	fi
+fi
+
+progressFile="${location%/}/.dotnet-fixes"
+
+if [[ "$reset" == true ]]; then
+	rm -f "$progressFile"
+fi
 
 echo ""
 echo "============================================================================="
@@ -337,11 +386,13 @@ run "SA1520" "Use braces consistently"
 run "SA1626" "Single-line comments must not use documentation-style slashes"
 run "SA1638" "Each Attribute Should Be on It's Own Line"
 
+rm -f "$progressFile"
+
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  ✅  All auto-fixable diagnostics processed."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "  TIP: To run ALL rules in one shot (no pauses), use:"
-echo "    dotnet format \$TARGET --severity info --verbosity detailed"
+echo "    dotnet format \$location --severity info --verbosity detailed"
 echo ""
