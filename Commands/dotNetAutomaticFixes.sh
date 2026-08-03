@@ -87,16 +87,12 @@ run "CA1512" "Use ArgumentOutOfRangeException throw helper"
 run "CA1513" "Use ObjectDisposedException throw helper"
 run "CA1515" "Types can be made internal"
 run "CA2208" "Instantiate argument exceptions correctly"
-run "CA2211" "Non-constant fields should not be visible (make const or readonly)"
 run "CA2245" "Do not assign a property to itself"
 run "CA2249" "Consider using String.Contains instead of String.IndexOf"
-
-run "CA1815" "???"
 
 # --- Performance ---
 run "CA1802" "Use literals where appropriate (static readonly → const)"
 run "CA1805" "Do not initialize unnecessarily (default value assignments)"
-run "CA1812" "Avoid uninstantiated internal classes"
 run "CA1823" "Remove unused private fields"
 run "CA1825" "Avoid zero-length array allocations (use Array.Empty<T>())"
 run "CA1826" "Do not use Enumerable methods on indexable collections (use indexer)"
@@ -245,9 +241,9 @@ run "IDE2000" "Allow / disallow multiple blank lines"
 run "IDE2001" "Embedded statements must not be on same line"
 run "IDE2002" "Consecutive braces must not be on same line"
 run "IDE2003" "Allow / disallow blank line after colon in constructor initializer"
-run "IDE2004" "Blank line required after switch section (when configured)"
-run "IDE2005" "Blank line between using directive groups"
-run "IDE2006" "Blank line before using directive group"
+run "IDE2004" "Blank line not allowed after colon in constructor initializer (when configured)"
+run "IDE2005" "Blank line not allowed after token in conditional expression (when configured)"
+run "IDE2006" "Blank line not allowed after => token in arrow expression clause (when configured)"
 
 # --- Using Directives Placement ---
 run "IDE0065" "'using' directive placement (inside vs outside namespace)"
@@ -335,7 +331,6 @@ run "SA1217" "Using static directives must be ordered alphabetically"
 
 # --- Naming Rules (SA1300-SA1316) ---
 run "SA1300" "Element must begin with upper-case letter"
-run "SA1301" "Element must begin with lower-case letter"
 run "SA1302" "Interface names must begin with I"
 run "SA1303" "Const field names must begin with upper-case letter"
 run "SA1304" "Non-private readonly fields must begin with upper-case letter"
@@ -384,7 +379,7 @@ run "SA1519" "Braces must not be omitted from multi-line child statement"
 run "SA1520" "Use braces consistently"
 
 run "SA1626" "Single-line comments must not use documentation-style slashes"
-run "SA1638" "Each Attribute Should Be on It's Own Line"
+run "SA1638" "File header file name documentation must match file name"
 
 rm -f "$progressFile"
 
