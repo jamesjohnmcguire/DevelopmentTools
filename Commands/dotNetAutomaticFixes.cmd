@@ -7,6 +7,15 @@
 ::
 :: Usage: dotNetAutomaticFixes.bat [path\to\solution.sln]
 :: =============================================================================
+::
+:: CONDITIONAL PAUSE
+:: ------------------------------------------------------------------
+:: If run from inside a git working tree, the pause is skipped automatically
+:: when a rule made no changes (checked via `git diff --quiet`), and always
+:: shown when dotnet format exits non-zero so a real error still gets your
+:: attention. Outside a git repo, it falls back to always pausing, since
+:: there's no reliable way to detect "no changes."
+:: =============================================================================
 
 :: To run ALL rules in one shot (no pauses), use:
 :: dotnet format %TARGET% --severity info --verbosity detailed
@@ -22,6 +31,10 @@ SET filterCommand=findstr /v /c:%filterText%
 SET "location=."
 SET "progressFile=%location%\.dotnet-fixes"
 SET "reset=false"
+
+SET "isGitRepo=false"
+git rev-parse --is-inside-work-tree >nul 2>&1
+IF NOT ERRORLEVEL 1 SET "isGitRepo=true"
 
 IF NOT "%~1"=="" GOTO check
 GOTO :main
@@ -371,11 +384,31 @@ IF EXIST "%progressFile%" (
 ECHO.
 ECHO [%~1] %~2
 
-dotnet format "%location%" --diagnostics %~1 --verbosity detailed | %filterCommand%
+dotnet format "%location%" --diagnostics %~1 --verbosity detailed > "%TEMP%\dnf_%~1.log" 2>&1
+SET "fmtExit=%errorlevel%"
+%filterCommand% "%TEMP%\dnf_%~1.log"
+DEL /Q "%TEMP%\dnf_%~1.log" >nul 2>&1
 
 ECHO %~1>>"%progressFile%"
 
 ECHO [%~1] %~2 Completed
+
+IF NOT "%fmtExit%"=="0" (
+	ECHO   !! dotnet format exited with code %fmtExit% - review required.
+	PAUSE
+	GOTO :EOF
+)
+
+IF "%isGitRepo%"=="true" (
+	git diff --quiet
+	IF NOT ERRORLEVEL 1 (
+		git diff --cached --quiet
+		IF NOT ERRORLEVEL 1 (
+			ECHO   ^(no changes made - skipping pause^)
+			GOTO :EOF
+		)
+	)
+)
 
 PAUSE
 GOTO :EOF

@@ -22,6 +22,14 @@
 # Ctrl-C at any point is safe. Come back later and re-run this script from
 # the same directory. It skips everything already marked done, and picks up on
 # the next not run rule automatically.
+#
+# CONDITIONAL PAUSE
+# ------------------------------------------------------------------
+# If run from inside a git working tree, the pause is skipped automatically
+# when a rule made no changes (checked via `git diff --quiet`), and always
+# shown when dotnet format exits non-zero (checked via $PIPESTATUS[0]) so a
+# real error still gets your attention. Outside a git repo, it falls back
+# to always pausing, since there's no reliable way to detect "no changes."
 # =============================================================================
 
 is_done()
@@ -42,11 +50,23 @@ run()
 	echo "[$id] $desc"
 
 	dotnet format "$location" --diagnostics "$id" --verbosity detailed | grep -v "is using configuration from"
+	local fmtExit=${PIPESTATUS[0]}
 
 	echo "$id" >> "$progressFile"
 
 	echo "[$id] $desc Completed"
-	read -r -p "  >> Press any key to continue..." -n 1
+
+	if [[ $fmtExit -ne 0 ]]; then
+		echo "  !! dotnet format exited with code $fmtExit - review required."
+		read -r -p "  >> Press any key to continue..." -n 1
+		return
+	fi
+
+	if [[ "$isGitRepo" == true ]] && git diff --quiet && git diff --cached --quiet; then
+		echo "  (no changes made - skipping pause)"
+	else
+		read -r -p "  >> Press any key to continue..." -n 1
+	fi
 }
 
 location=.
@@ -68,6 +88,11 @@ if [ $# -gt 0 ]; then
 fi
 
 progressFile="${location%/}/.dotnet-fixes"
+
+isGitRepo=false
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+	isGitRepo=true
+fi
 
 if [[ "$reset" == true ]]; then
 	rm -f "$progressFile"
