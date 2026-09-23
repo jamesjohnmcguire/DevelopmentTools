@@ -1,4 +1,4 @@
-@ECHO OFF
+@ECHO ON
 
 pwsh -ExecutionPolicy Bypass -File "%~dp0EmptyDirectoriesRemove.ps1" %*
 
