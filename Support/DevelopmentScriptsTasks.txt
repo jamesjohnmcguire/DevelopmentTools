@@ -1,3 +1,5 @@
+composerStatus.cmd	Add Colors to Output
+ComposerStatus	Doubled	Security audit:	Security audit:
 Testing.cmd	Work through issues with escaping quotes
 Set Consistent Capitalization on Script Names
 Test Explicitly Setting Port
