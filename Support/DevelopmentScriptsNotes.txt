@@ -5,3 +5,5 @@ Videos
 	ffmpeg -i ShibuyaCrossing.MOV -vcodec libx264 -crf 28 -preset fast -b:v 1M -acodec aac -b:a 96k -movflags +faststart output.mp4
 Find
 	findstr /s /i gcloud *.* 2>nul
+DotNetAutomaticFixes
+	A separate reliability issue remains: both scripts mark a rule completed even when dotnet format fails; the CMD script also calculates its progress-file path before reading the supplied target. Those can cause a check to be skipped. I haven’t edited the scripts
